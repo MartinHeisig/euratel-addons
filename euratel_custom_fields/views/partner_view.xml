@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+     
+    <!-- Add debit reference and bga to financial tab --> 
+    <record id="partner_account_form" model="ir.ui.view">
+      <field name="name">account.partner.form.euratel</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="account.view_partner_property_form"/>
+      <field name="arch" type="xml">
+        <field name="debit" position="after">
+          <field name="debit_ref"/>
+        </field>
+      </field>
+    </record>
+    
+    <!-- Add additional fields -->
+    <record id="partner_form" model="ir.ui.view">
+      <field name="name">res.partner.form.euratel</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_form"/>
+      <field name="arch" type="xml">
+        <page string="Contacts">
+          <page string="Weiteres">
+            <group>
+              <field name="bga"/>
+            </group>
+          </page>
+        </page>
+      </field>
+    </record>
+    
+  </data>
+</openerp>
