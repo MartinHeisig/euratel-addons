@@ -11,6 +11,9 @@
         <field name="debit" position="after">
           <field name="debit_ref"/>
         </field>
+        <field name="bank_name" position="replace">
+          <field name="bank_bic"/>
+        </field>
       </field>
     </record>
     
