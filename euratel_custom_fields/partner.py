@@ -29,4 +29,7 @@ class euratel_partner(osv.osv):
     _columns = {
         'debit_ref': fields.char('Lastschrift Mandatsreferenz', size=64),
         'bga' : fields.char('BGA', size=64),
+        'first_name' : fields.char('Vorname', size=64),
+        'gender' : fields.selection((('w','weiblich'),('m','männlich')), 
+                          'Geschlecht'),
     }
