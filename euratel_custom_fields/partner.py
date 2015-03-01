@@ -32,4 +32,10 @@ class euratel_partner(osv.osv):
         'first_name' : fields.char('Vorname', size=64),
         'gender' : fields.selection((('w','weiblich'),('m','männlich')), 
                           'Geschlecht'),
+        'branch_ids' : fields.many2many(
+            'res.partner',
+            'res_partner_branch',
+            'partner_id',
+            'branch_id',
+            'Filialen'),
     }

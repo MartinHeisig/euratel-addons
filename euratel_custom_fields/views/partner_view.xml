@@ -39,6 +39,19 @@
             </group>
           </page>
         </page>
+        <page name="internal_notes" position="before">
+          <page string="Filialen" attrs="{'invisible':[('is_company','=', True)]}">
+            <field name="branch_ids">
+              <tree string="Filiale Details">
+                <field name="name"/>
+                <field name="city"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="fax"/>
+              </tree>
+            </field>
+          </page>
+        </page>
       </field>
     </record>
     
