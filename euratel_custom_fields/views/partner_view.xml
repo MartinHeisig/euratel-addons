@@ -39,6 +39,7 @@
             </group>
           </page>
         </page>
+        <!-- branch_ids -->
         <page name="internal_notes" position="before">
           <page string="Filialen" attrs="{'invisible':[('is_company','=', True)]}">
             <field name="branch_ids">
@@ -52,6 +53,26 @@
             </field>
           </page>
         </page>
+        <!-- first name on partner contacts kanban view -->
+        <xpath expr="//h4//a//field[@name='name']" position="after">
+          <br/><field name="first_name"/>
+        </xpath>
+        <!-- first name on pop-up -->
+        <xpath expr="//form[@string='Contact']//sheet//field[@name='category_id']" position="before">
+          <field name="first_name" placeholder="Vorname" style="width: 70%"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Add first name to simplified form view -->
+    <record id="partner_simple_form" model="ir.ui.view">
+      <field name="name">res.partner.simple.form.amamedis</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="base.view_partner_simple_form"/>
+      <field name="arch" type="xml">
+        <field name="parent_id" position="before">
+          <field name="first_name" placeholder="Vorname"/>
+        </field>
       </field>
     </record>
     
