@@ -55,7 +55,18 @@
         </page>
         <!-- first name on partner contacts kanban view -->
         <xpath expr="//h4//a//field[@name='name']" position="after">
-          <br/><field name="first_name"/>
+          <t t-if="record.first_name.raw_value"><br/><field name="first_name"/></t>
+        </xpath>
+        <!-- City and street -->
+        <xpath expr="//td[@class='oe_kanban_title1']//i" position="before">
+          <div>
+            <field name="street"/>,
+            <field name="city"/>
+          </div>
+        </xpath>
+        <!-- remove fax -->
+        <xpath expr="//td[@class='oe_kanban_title1']//div[@t-if='record.fax.raw_value']" position="replace">
+          <div/>
         </xpath>
         <!-- first name on pop-up -->
         <xpath expr="//form[@string='Contact']//sheet//field[@name='category_id']" position="before">

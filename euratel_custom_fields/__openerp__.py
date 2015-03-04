@@ -1,13 +1,17 @@
 {
-    'name': 'EuraTel Custom Fields',
+    'name': 'Amamedis Custom Fields',
     'category': 'Tools',
-    'summary': 'Custom fields for EuraTel GmbH',
+    'summary': 'Custom fields for Amamedis',
     'version': '1.0',
     'description': """
-Benutzerdefiniert Felder für Euratel GmbH
+Benutzerdefinierte Felder für Amamedis
 Kundenansicht:
+
 * Lastschrift Mandatsreferenz
 * BGA
+* Vorname
+* Filialen
+* Änderungen an den Ansichten
         """,
     'author': 'artmin IT-Dienstleistungen',
     'depends': ['sale'],
