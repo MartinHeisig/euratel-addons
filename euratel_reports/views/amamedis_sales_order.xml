@@ -15,8 +15,8 @@
             <div>
               <t t-if="o.partner_id.first_name">
                 <span t-field="o.partner_id.first_name"/>
-                <span t-field="o.partner_id.name"/>
               </t>
+              <span t-field="o.partner_id.name"/>
             </div>
             <div t-field="o.partner_id.street"/>
             <div t-if="o.partner_id.street2"
@@ -38,8 +38,8 @@
             <div>
               <t t-if="o.partner_id.first_name">
                 <span t-field="o.partner_id.first_name"/>
-                <span t-field="o.partner_shipping_id.name"/>
               </t>
+              <span t-field="o.partner_shipping_id.name"/>
             </div>
             <div t-field="o.partner_shipping_id.street"/>
             <div t-if="o.partner_shipping_id.stree2"
@@ -174,7 +174,10 @@
             <div class="small vspace-xs" t-field="o.note"/>
           </t>
 
-          <div class="small vspace-xs">Mit freundlichen Grüßen</div>
+          <div t-if="o.section_id" class="small vspace-xs">
+            Mit freundlichen Grüßen<br/>
+            <span t-field="o.section_id.company_id.partner_id.name"/>
+          </div>
 
         </div>
       </xpath>      
