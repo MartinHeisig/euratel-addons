@@ -15,7 +15,8 @@
               <b>Ansprechpartner:</b>
               <span t-field="o.user_id.name"/>
             </span>
-            <table class="bg-grey vspace-m">
+            <table t-if="o.partner_id.bga or o.partner_id.phone or o.name"
+              class="bg-grey vspace-m">
               <tr t-if="o.partner_id.bga">
                 <td><b>BGA</b></td>
                 <td><span t-field="o.partner_id.bga"/></td>
