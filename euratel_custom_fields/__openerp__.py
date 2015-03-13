@@ -17,6 +17,7 @@ Kundenansicht:
     'depends': ['sale'],
     'data': [
         'views/partner_view.xml',
+        'views/sale_view.xml',
     ],
     'installable': True,
     'auto-install' : False,

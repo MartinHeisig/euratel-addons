@@ -9,7 +9,28 @@
         <div class="page">
           <t t-call="report.external_report_sender"/>
           <t t-call="report.external_report_to"/>
-       
+
+          <div>
+            <span t-if="not o.user_id.name in 'Administrator'" class="right">
+              <b>Ansprechpartner:</b>
+              <span t-field="o.user_id.name"/>
+            </span>
+            <table class="bg-grey vspace-m">
+              <tr t-if="o.partner_id.bga">
+                <td><b>BGA</b></td>
+                <td><span t-field="o.partner_id.bga"/></td>
+              </tr>
+              <tr t-if="o.partner_id.phone">
+                <td><b>Ihre Telefonnummer</b></td>
+                <td><span t-field="o.partner_id.phone"/></td>
+              </tr>
+              <tr t-if="o.name">
+                <td><br/><b>Ihre Bestellung</b></td>
+                <td><br/><span t-field="o.name"/></td>
+              </tr>
+            </table>
+          </div>
+        
           <div class="fullwidth vspace-l">
             <span class="title hspace-s">
               <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Rechnung</span>
@@ -22,9 +43,9 @@
             </span>
             <span class="title hspace-m" t-field="o.number"/>
           </div>
-          
-          <div t-if="o.date_invoice" class="right">
-            Leipzig, den <span t-field="o.date_invoice"/>
+
+          <div t-if="o.date_invoice" class="right vspace-s" style="margin-bottom:0.6cm;">
+            Leipzig, den <span t-esc="o.date_invoice"/>
           </div>
           
           <table id="positions" class="fullwidth vspace-s">
@@ -33,7 +54,8 @@
                 <th>Artikelnummer</th>
                 <th>Rechnungsposten</th>
                 <th class="right">Menge</th>
-                <th class="right">Einzelpreis</th>
+                <th class="right">Preis/PE</th>
+                <th class="right">PE</th>
                 <th class="right">Summe</th>
               </tr>
             </thead>
@@ -57,6 +79,9 @@
                   <span t-esc="str('%.4f' % l.price_unit).replace('.',',')"/> €
                 </td>
                 <td class="right">
+                  <span t-field="l.uos_id.name"/>
+                </td>
+                <td class="right">
                   <span t-field="l.price_subtotal"
                     t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
                 </td>
@@ -64,20 +89,20 @@
               
               <tr>
                 <td class="tiny">&amp;nbsp;</td>
-                <td class="tiny line" colspan="4">&amp;nbsp;</td>
+                <td class="tiny line" colspan="5">&amp;nbsp;</td>
               </tr>
              
               <t t-foreach="o.tax_line" t-as="tax">
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 7%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="3">Zwischensumme 7&amp;thinsp;%</td>
+                  <td colspan="4">Zwischensumme 7&amp;thinsp;%</td>
                   <td class="right">
                     <span t-field="tax.base"/> €
                   </td>
                 </tr>
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 19%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="3">Zwischensumme 19&amp;thinsp;%</td>
+                  <td colspan="4">Zwischensumme 19&amp;thinsp;%</td>
                   <td class="right">
                     <span t-field="tax.base"/> €
                   </td>
@@ -86,14 +111,14 @@
               <t t-foreach="o.tax_line" t-as="tax">
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 7%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="3">7 %&amp;thinsp;MwSt.</td>
+                  <td colspan="4">7 %&amp;thinsp;MwSt.</td>
                   <td class="right">
                     <span t-field="tax.amount"/> €
                   </td>
                 </tr>
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 19%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="3">19 %&amp;thinsp;MwSt.</td>
+                  <td colspan="4">19 %&amp;thinsp;MwSt.</td>
                   <td class="right">
                     <span t-field="tax.amount"/> €
                   </td>
@@ -102,17 +127,17 @@
               
               <tr>
                 <td>&amp;nbsp;</td>
-                <td class="sum line" colspan="3">Rechnungsbetrag</td>
+                <td class="sum line" colspan="4">Rechnungsbetrag</td>
                 <td class="sum line right">
-                  <span t-field="o.amount_total"/>
+                  <span t-field="o.amount_total"/> €
                 </td>
               </tr>
 
               <tr>
                 <td>&amp;nbsp;</td>
-                <td colspan="4" class="normal">
+                <td colspan="5" class="small">
                   &amp;nbsp;<br/>
-                  Bitte überweisen Sie den Rechnungsbetrag innerhalb der festgesetzten Frist:<br/>
+                  Bitte überweisen Sie den Rechnungsbetrag innerhalb der festgesetzten Frist.<br/>
                   <div t-field="o.comment"/>
                   Für Rückfragen stehen wir gern zur Verfügung.
                 </td>

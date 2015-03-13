@@ -10,21 +10,29 @@
             <div t-field="o.partner_id.parent_id.name"/>
           </t>
         </t>
-        <div t-field="o.partner_id.name"/>
-        <div class="vspace-s" t-field="o.partner_id.street"/>
-        <span class="vspace-xs" t-field="o.partner_id.zip"/>
-        <span t-field="o.partner_id.city"/>
+        <span t-field="o.partner_id.first_name"/>
+        <span t-field="o.partner_id.name"/><br/>
+        <div t-field="o.partner_id.street"/>
+        <div class="vspace-s">
+          <span t-field="o.partner_id.zip"/>
+          <span t-field="o.partner_id.city"/>
+        </div>
       </div>
     </template>
  
     <!-- create info template for company infos -->
     <template id="report.external_report_sender">
       <!-- Multicompany -->
-      <t t-if="o and 'company_id' in o">
-          <t t-set="company" t-value="o.company_id"/>
+      <t t-if="o and 'section_id' in o">
+        <t t-set="company" t-value="o.section_id.company_id"/>
       </t>
-      <t t-if="not o or not 'company_id' in o">
+      <t t-if="not o or not 'section_id' in o">
+        <t t-if="o and 'company_id' in o">
+          <t t-set="company" t-value="o.company_id"/>
+        </t>
+        <t t-if="not 'company_id' in o">
           <t t-set="company" t-value="res_company"/>
+        </t>
       </t>
 
       <div class="small clearleft" style="padding-top:3.5cm">
@@ -80,7 +88,7 @@
       <div class="header" style="text-align:right;">
         <img t-if="company.logo" 
           t-att-src="'data:image/png;base64,%s' % company.logo" 
-          style="max-width:7.5cm; max-height:3,5cm"/>
+          style="max-width:6cm; max-height:3,5cm"/>
       </div>
     </template>
 
@@ -131,6 +139,9 @@
         }
       .clearleft {
         clear : left;
+        }
+      .clearright {
+        clear : right;
         }
       .top {
         vertical-align: top;
@@ -208,6 +219,10 @@
         text-align:right;
         padding-left: 0.2cm;
         padding-right: 0cm;
+        }
+      .bg-grey {
+        background-color: #d0d0d0;
+        border: 5px solid #d0d0d0;
         }
     </template>
     
