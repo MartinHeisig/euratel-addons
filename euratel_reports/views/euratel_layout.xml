@@ -60,38 +60,7 @@
         </t>
  
         <div class="footer small">
-          <div class="topLine center">
-            <span t-field="company.partner_id.name"/> &amp;middot;
-            <span t-field="company.partner_id.street"/> &amp;middot;
-            <span t-field="company.partner_id.zip"/>
-            <span t-field="company.partner_id.city"/> &amp;middot;
-            <span t-field="company.partner_id.website"/> &amp;middot;
-            <span t-field="company.partner_id.email"/><br/>
-            
-            Geschäftsführer: <span t-field="company.ceo"/> &amp;middot;
-            <span t-field="company.court"/> &amp;middot;
-            <span t-field="company.company_registry"/> &amp;middot;
-            USt-ID: <span t-field="company.vat"/><br/>
-            
-            <!-- BLZ Konto -->
-            <t t-foreach="company.bank_ids" t-as="l">
-              <t t-if="l.state == 'bank' and l.footer">
-                Bankverbindungen: <span t-field="l.bank_name"/> &amp;middot;
-                BLZ <span t-field="l.bank_bic"/> &amp;middot;
-                Konto <span t-field="l.acc_number"/>
-              </t>
-            </t><br/>
-            <!-- IBAN Konto -->
-            <t t-foreach="company.bank_ids" t-as="l">
-              <t t-if="l.state == 'iban' and l.footer">
-                IBAN: <span t-field="l.acc_number"/> &amp;middot;
-                Swift (BIC): <span t-field="l.bank_bic"/>
-              </t>
-            </t>
-            <div class="bottom right">
-            Seite <span class="page"/> von <span class="topage"/>
-          </div>
-          </div>
+          <div t-raw="company.rml_footer"/>
         </div>
       </xpath>
     </template>
