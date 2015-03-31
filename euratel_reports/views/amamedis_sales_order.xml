@@ -184,7 +184,7 @@
                   <span t-esc="l.product_uom_qty"/>
                 </td>
                 <td class="right">
-                  <span t-esc="str('%.4f' % l.price_unit).replace('.',',')"/> €
+                  <span t-esc="str('%.4f' % l.price_unit).replace('.',',')"/>&amp;#x202f;€
                 </td>
                 <td class="right">
                   <span t-field="l.product_uom.name"/>
@@ -204,14 +204,14 @@
                 <td>&amp;nbsp;</td>
                 <td colspan="4">Zwischensumme netto</td>
                 <td class="right">
-                  <span t-field="o.amount_untaxed"/> €
+                  <span t-field="o.amount_untaxed"/>&amp;#x202f;€
                 </td>
               </tr>
               <tr>
                 <td>&amp;nbsp;</td>
                 <td colspan="4">Umsatzsteuer</td>
                 <td class="right">
-                  <span t-field="o.amount_tax"/> €
+                  <span t-field="o.amount_tax"/>&amp;#x202f;€
                 </td>
               </tr>
              
@@ -219,7 +219,7 @@
                 <td>&amp;nbsp;</td>
                 <td class="sum line" colspan="4">Gesamtbetrag</td>
                 <td class="sum line right">
-                  <span t-field="o.amount_total"/> €
+                  <span t-field="o.amount_total"/>&amp;#x202f;€
                 </td>
               </tr>
             </tbody>
