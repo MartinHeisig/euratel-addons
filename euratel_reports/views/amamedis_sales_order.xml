@@ -7,8 +7,40 @@
       inherit_id="sale.report_saleorder_document">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
+          <!-- Multicompany -->
+          <t t-if="o and 'section_id' in o">
+            <t t-set="section" t-value="o.section_id"/>
+          </t>
+          <t t-if="o and not 'section_id' in o">
+            <t t-if="o.partner_id and 'section_id' in o.partner_id">
+              <t t-set="section" t-value="o.partner_id.section_id"/>
+            </t>
+          </t>
+
           <t t-call="report.external_report_sender"/>
- 
+          
+          <!-- shipping address != invoice address -->
+          <div 
+            class="textbox-right"
+            id="delivery">
+            <p class="normal">Lieferung an</p>
+            <div t-if="o.partner_id.parent_id">
+              <span t-field="o.partner_id.parent_id.name"/>
+            </div>
+            <div>
+              <t t-if="o.partner_id.first_name">
+                <span t-field="o.partner_id.first_name"/>
+              </t>
+              <span t-field="o.partner_shipping_id.name"/>
+            </div>
+            <div t-field="o.partner_shipping_id.street"/>
+            <div t-if="o.partner_shipping_id.street2"
+              t-field="o.partner_shipping_id.street2"/>
+            <p/>
+            <span t-field="o.partner_shipping_id.zip"/>
+            <span t-field="o.partner_shipping_id.city"/> 
+          </div>
+
           <div class="vspace-xs clearleft left" id="addressee">
             <div t-if="not o.partner_id.is_company" 
               t-field="o.partner_id.parent_id.name"/> 
@@ -26,72 +58,80 @@
             <span t-field="o.partner_id.city"/> 
           </div>
  
-          <!-- shipping address != invoice address -->
-          <div 
-            class="right vspace-xs"
-            id="delivery"
-            style="max-width:7cm;">
-            <p><b>Lieferung an</b></p>
-            <div t-if="o.partner_id.parent_id">
-              <span t-field="o.partner_id.parent_id.name"/>
-            </div>
-            <div>
-              <t t-if="o.partner_id.first_name">
-                <span t-field="o.partner_id.first_name"/>
-              </t>
-              <span t-field="o.partner_shipping_id.name"/>
-            </div>
-            <div t-field="o.partner_shipping_id.street"/>
-            <div t-if="o.partner_shipping_id.stree2"
-              t-field="o.partner_shipping_id.street2"/>
-            <span t-field="o.partner_shipping_id.zip"/>
-            <span t-field="o.partner_shipping_id.city"/> 
-          </div>
+          <table
+            class="fullwidth"
+            style="clear:both; border-top:0.6cm solid white">
+            <tr>
+              <td class="top">
+                <table t-if="o.partner_id.ref or o.partner_id.phone or o.client_order_ref"
+                  class="bg-grey small left hspace-s">
+                  <tr t-if="o.partner_id.ref">
+                    <td><b>Kundennr.</b></td>
+                    <td><span t-field="o.partner_id.ref"/></td>
+                  </tr>
+                  <tr t-if="o.partner_id.phone">
+                    <td><b>Ihre Telefonnummer</b></td>
+                    <td t-if="o.partner_id.parent_id">
+                      <span t-field="o.partner_id.parent_id.phone"/>
+                    </td>
+                    <td t-if="not o.partner_id.parent_id.phone">
+                      <span t-field="o.partner_id.parent_id"/>
+                    </td>
+                  </tr>
+                  <tr t-if="o.client_order_ref or o.client_order_date">
+                    <td><br/><b>Ihre Bestellung</b></td>
+                    <td>
+                      <br/><span t-field="o.client_order_ref"/>
+                      <t t-if="o.client_order_date">
+                        vom <span t-field="o.client_order_date"/>
+                      </t>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td t-if="section" style="vertical-align:top; padding-right:0cm">
+                <div class="textbox-right" t-raw="section.contact"/>
+              </td>
+            </tr>
+          </table>
 
-          <div class="clearleft clearright vspace-s">
-            <span t-if="not o.user_id.name in 'Administrator'" class="right">
-              <b>Ansprechpartner:</b>
-              <span t-field="o.user_id.name"/>
-            </span>
-            <table t-if="o.partner_id.bga or o.partner_id.phone or o.client_order_ref"
-              class="bg-grey vspace-m">
-              <tr t-if="o.partner_id.bga">
-                <td><b>BGA</b></td>
-                <td><span t-field="o.partner_id.bga"/></td>
+          <div class="textbox-right vspace-m">
+            <div class="title"
+              t-if="o.state not in ['draft','sent']">
+              AUFTRAGSBESTÄTIGUNG
+            </div>
+            <div class="title"
+              t-if="o.state in ['draft','sent']">
+              ANGEBOT
+            </div>
+            <table>
+              <tr>
+                <td style="padding-right: 0.5cm">
+                  <t t-if="o.state not in ['draft','sent']">
+                    <b>Auftragsnr.</b>
+                  </t>
+                  <t t-if="o.state in ['draft','sent']">
+                    <b>Angebotsnr.</b>
+                  </t>
+                </td>
+                <td><b>Datum</b></td>
               </tr>
-              <tr t-if="o.partner_id.phone">
-                <td><b>Ihre Telefonnummer</b></td>
-                <td><span t-field="o.partner_id.phone"/></td>
-              </tr>
-              <tr t-if="o.name">
-                <td><br/><b>Ihre Bestellung</b></td>
-                <td><br/><span t-field="o.client_order_ref"/></td>
+              <tr>
+                <td><span t-field="o.name"/></td>
+                <td>
+                  <t t-if="o.date_order">
+                    <span t-esc="datetime.datetime.strptime(o.date_order, '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y')"/>
+                  </t>
+                </td>
               </tr>
             </table>
-          </div>
- 
-          <div class="fullwidth vspace-l">
-            <span class="title hspace-s"
-              t-if="o.state not in ['draft','sent']">
-              Auftragsbest&amp;auml;tigung Nr.
-            </span>
-            <span class="title hspace-s"
-              t-if="o.state in ['draft','sent']">
-              Angebot Nr.
-            </span>
-            <span class="title hspace-s" t-field="o.name"/>
-          </div>
-        
-         <div t-if="o.date_order" class="right vspace-s" style="margin-bottom:0.6cm;">
-           Leipzig, den <span
-             t-esc="datetime.datetime.strptime(o.date_order, '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y')"/>
           </div>
           
           <table id="positions" class="fullwidth vspace-s">
             <thead>
               <tr>
-                <th>Artikelnummer</th>
-                <th>Rechnungsposten</th>
+                <th>POS</th>
+                <th>Artikel</th>
                 <th class="right">Menge</th>
                 <th class="right">Preis/PE</th>
                 <th class="right">PE</th>
@@ -101,16 +141,45 @@
             <tbody class="sale_tbody top">
               <tr t-foreach="o.order_line" t-as="l">
                 <td>
-                  <span t-field="l.product_id.default_code"/>
+                  <b><span t-esc="l_index + 1"/></b>
                 </td>
                 <td>
-                  <t t-if="'] ' in l.name">
-                    <span t-esc="(l.name).split('] ')[1]"/>
-                  </t>
-                  <t t-if="not '] ' in l.name">
-                    <span t-field="l.name"/>
-                  </t>
-                </td>
+                  <!-- Details -->
+                  <table style="width:100%">
+                    <tr t-if="l.product_id.default_code">
+                      <td><b>Artikelnr.</b></td>
+                      <td><span t-field="l.product_id.default_code"/></td>
+                    </tr>
+                    <tr>
+                      <td><b>Beschreibung</b></td>
+                      <td>
+                        <t t-if="'] ' in l.name">
+                          <span t-esc="(l.name).split('] ')[1]"/>
+                        </t>
+                        <t t-if="not '] ' in l.name">
+                          <span t-field="l.name"/>
+                        </t>
+                      </td>
+                    </tr>
+                    <!-- Add format here -->
+                    <tr t-if="l.product_packaging">
+                      <td><b>Verpackungsart</b></td>
+                      <td><span t-field="l.product_packaging.name"/></td>
+                    </tr>
+                    <tr t-if="o.delivery_date">
+                      <td><b>Liefertermin</b></td>
+                      <td><span t-field="o.delivery_date"/></td>
+                    </tr>
+                    <tr t-if="l.product_id.image">
+                      <td> </td>
+                      <td>
+                        <img t-if="l.product_id.image" 
+                          t-att-src="'data:image/png;base64,%s' % l.product_id.image_medium" 
+                          style="width:100%"/>
+                      </td>
+                    </tr> 
+                  </table>
+               </td>
                 <td class="right">
                   <span t-esc="l.product_uom_qty"/>
                 </td>
@@ -156,29 +225,28 @@
             </tbody>
           </table>
           
-          <table class="vspace-s">
+          <table class="fullwidth vspace-s">
             <tr t-if="o.carrier_id">
-              <td><b>Versandart</b></td>
+              <td style="width:3.5cm"><b>Versandart</b></td>
               <td><span t-field="o.carrier_id.name"/></td>
             </tr>
             <tr t-if="o.incoterm">
               <td><b>Lieferbedingung</b></td>
               <td><span t-field="o.incoterm.name"/></td>
             </tr>
-            <tr t-if="o.payment_term">
+            <tr t-if="o.partner_id.property_payment_term">
               <td><b>Zahlungsbedingung</b></td>
-              <td><span t-field="o.payment_term.name"/></td>
+              <td><span t-field="o.partner_id.property_payment_term"/></td>
             </tr>
           </table>
 
           <t t-if="o.note">
-            <div class="small vspace-xs" t-field="o.note"/>
+            <div class="vspace-s" t-field="o.note"/>
           </t>
 
-          <div t-if="o.section_id" class="small vspace-xs">
-            Mit freundlichen Grüßen<br/>
-            <span t-field="o.section_id.company_id.partner_id.name"/>
-          </div>
+          <t t-if="section">
+            <div class="vspace-s" t-raw="section.closing"/>
+          </t>
 
         </div>
       </xpath>      

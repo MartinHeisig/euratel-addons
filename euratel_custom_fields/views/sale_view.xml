@@ -8,11 +8,38 @@
       <field name="model">crm.case.section</field>
       <field name="inherit_id" ref="sales_team.crm_case_section_view_form"/>
       <field name="arch" type="xml">
-        <field name="user_id" position="after">
-          <field name="company_id"/>
+        <xpath expr="//div[@class='oe_title']" position="before">
+          <field 
+            name="image"
+            widget="image"
+            class="oe_left oe_avatar"
+            options="{'preview_image': 'image_medium', 'size': [90, 90]}"/>
+        </xpath>
+        <page string="Notes" position="after">
+          <page string="Report-Konfiguration">
+            <group>
+              <field name="from_email"/>
+              <field name="from_line"/>
+              <field name="contact"/>
+              <field name="closing"/>
+              <field name="footer"/>
+            </group>
+          </page>
+        </page>
+      </field>
+    </record>
+
+    <record id="sale_order_form" model="ir.ui.view">
+      <field name="name">sale.order.form.amamedis</field>
+      <field name="model">sale.order</field>
+      <field name="inherit_id" ref="sale.view_order_form"/>
+      <field name="arch" type="xml">
+        <field name="client_order_ref" position="after">
+          <field name="client_order_date"/>
+          <field name="delivery_date"/>
         </field>
       </field>
     </record>
-   
+
   </data>
 </openerp>

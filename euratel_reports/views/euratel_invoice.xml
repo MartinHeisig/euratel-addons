@@ -7,53 +7,95 @@
       inherit_id="account.report_invoice_document">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
+          <!-- Multicompany -->
+          <t t-if="o and 'section_id' in o">
+            <t t-set="section" t-value="o.section_id"/>
+          </t>
+          <t t-if="o and not 'section_id' in o">
+            <t t-if="o.partner_id and 'section_id' in o.partner_id">
+              <t t-set="section" t-value="o.partner_id.section_id"/>
+            </t>
+          </t>
+
           <t t-call="report.external_report_sender"/>
+          <div>&amp;nbsp;</div>
           <t t-call="report.external_report_to"/>
 
-          <div>
-            <span t-if="not o.user_id.name in 'Administrator'" class="right">
-              <b>Ansprechpartner:</b>
-              <span t-field="o.user_id.name"/>
-            </span>
-            <table t-if="o.partner_id.bga or o.partner_id.phone or o.name"
-              class="bg-grey vspace-m">
-              <tr t-if="o.partner_id.bga">
-                <td><b>BGA</b></td>
-                <td><span t-field="o.partner_id.bga"/></td>
+          <!-- Info box -->
+          <table
+            class="fullwidth"
+            style="clear:both; border-top:0.6cm solid white">
+            <tr>
+              <td class="top">
+                <table t-if="o.partner_id.ref or o.partner_id.phone or name"
+                  class="bg-grey small left hspace-s">
+                  <tr t-if="o.partner_id.ref">
+                    <td><b>Kundennr.</b></td>
+                    <td><span t-field="o.partner_id.ref"/></td>
+                  </tr>
+                  <tr t-if="o.partner_id.phone">
+                    <td><b>Ihre Telefonnummer</b></td>
+                    <td t-if="o.partner_id.parent_id">
+                      <span t-field="o.partner_id.parent_id.phone"/>
+                    </td>
+                    <td t-if="not o.partner_id.parent_id.phone">
+                      <span t-field="o.partner_id.parent_id"/>
+                    </td>
+                  </tr>
+                  <tr t-if="o.name">
+                    <td><br/><b>Ihre Bestellung</b></td>
+                    <td>
+                      <br/><span t-field="o.name"/>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td t-if="section" style="vertical-align:top; padding-right:0cm">
+                <div class="textbox-right" t-raw="section.contact"/>
+              </td>
+            </tr>
+          </table>
+
+          <div class="textbox-right vspace-m">
+            <div class="title" t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">RECHNUNG</div>
+            <div class="title" t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA RECHNUNG</div>
+            <div class="title" t-if="o.type == 'out_invoice' and o.state == 'draft'">RECHNUNGSENTWURF</div>
+            <div class="title" t-if="o.type == 'out_invoice' and o.state == 'cancel'">STORNIERTE RECHNUNG</div>
+            <div class="title" t-if="o.type == 'out_refund'">RÜCKZAHLUNG</div>
+            <div class="title" t-if="o.type == 'in_refund'">LIEFERANTENRÜCKZAHLUNG</div>
+            <div class="title" t-if="o.type == 'in_invoice'">LIEFERANTENRECHNUNG</div>
+            <table>
+              <tr>
+                <td t-if="o.number" style="padding-right: 0.5cm">
+                  <t t-if="o.type not in ['in_refund','in_invoice']">
+                    <b>Rechnungsnr.</b>
+                  </t>
+                  <t t-if="o.type in ['in_refund','in_invoice']">
+                    <b>Zahlungsnr.</b>
+                  </t>
+                </td>
+                <td t-if="o.date_invoice"><b>Datum</b></td>
               </tr>
-              <tr t-if="o.partner_id.phone">
-                <td><b>Ihre Telefonnummer</b></td>
-                <td><span t-field="o.partner_id.phone"/></td>
-              </tr>
-              <tr t-if="o.name">
-                <td><br/><b>Ihre Bestellung</b></td>
-                <td><br/><span t-field="o.name"/></td>
+              <tr>
+                <td t-if="o.number"><span t-field="o.number"/></td>
+                <td t-if="o.date_invoice">
+                  <span t-esc="datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y')"/>
+                </td>
               </tr>
             </table>
           </div>
-        
+ 
           <div class="fullwidth vspace-l">
             <span class="title hspace-s">
-              <span t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">Rechnung</span>
-              <span t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA Rechnung</span>
-              <span t-if="o.type == 'out_invoice' and o.state == 'draft'">Rechnungsentwurf</span>
-              <span t-if="o.type == 'out_invoice' and o.state == 'cancel'">Stornierte Rechnung</span>
-              <span t-if="o.type == 'out_refund'">Rückzahlung</span>
-              <span t-if="o.type == 'in_refund'">Lieferantenrückzahlung</span>
-              <span t-if="o.type == 'in_invoice'">Liererantenrechnung</span>
-            </span>
+           </span>
             <span class="title hspace-m" t-field="o.number"/>
           </div>
 
-          <div t-if="o.date_invoice" class="right vspace-s" style="margin-bottom:0.6cm;">
-            Leipzig, den <span t-esc="o.date_invoice"/>
-          </div>
-          
           <table id="positions" class="fullwidth vspace-s">
             <thead>
               <tr>
-                <th>Artikelnummer</th>
-                <th>Rechnungsposten</th>
+                <th>POS</th>
+                <th>Artikel</th>
                 <th class="right">Menge</th>
                 <th class="right">Preis/PE</th>
                 <th class="right">PE</th>
@@ -63,15 +105,35 @@
             <tbody class="sale_tbody top">
               <tr t-foreach="o.invoice_line" t-as="l">
                 <td>
-                  <span t-field="l.product_id.default_code"/>
+                  <b><span t-esc="l_index + 1"/></b>
                 </td>
                 <td>
-                  <t t-if="'] ' in l.name">
-                    <span t-esc="(l.name).split('] ')[1]"/>
-                  </t>
-                  <t t-if="not '] ' in l.name">
-                    <span t-field="l.name"/>
-                  </t>
+                  <!-- Details -->
+                  <table style="width:100%">
+                    <tr t-if="l.product_id.default_code">
+                      <td><b>Artikelnr.</b></td>
+                      <td><span t-field="l.product_id.default_code"/></td>
+                    </tr>
+                    <tr>
+                      <td><b>Beschreibung</b></td>
+                      <td>
+                        <t t-if="'] ' in l.name">
+                          <span t-esc="(l.name).split('] ')[1]"/>
+                        </t>
+                        <t t-if="not '] ' in l.name">
+                          <span t-field="l.name"/>
+                        </t>
+                      </td>
+                    </tr>
+                    <tr t-if="l.product_id.image">
+                      <td> </td>
+                      <td>
+                        <img t-if="l.product_id.image" 
+                          t-att-src="'data:image/png;base64,%s' % l.product_id.image_medium" 
+                          style="width:100%"/>
+                      </td>
+                    </tr> 
+                  </table>
                 </td>
                 <td class="right">
                   <span t-esc="l.quantity"/>
@@ -133,18 +195,23 @@
                   <span t-field="o.amount_total"/> €
                 </td>
               </tr>
-
-              <tr>
-                <td>&amp;nbsp;</td>
-                <td colspan="5" class="small">
-                  &amp;nbsp;<br/>
-                  Bitte überweisen Sie den Rechnungsbetrag innerhalb der festgesetzten Frist.<br/>
-                  <div t-field="o.comment"/>
-                  Für Rückfragen stehen wir gern zur Verfügung.
-                </td>
-              </tr>              
             </tbody>
           </table>
+          
+          <table class="fullwidth vspace-s">
+            <tr t-if="o.partner_id.property_payment_term">
+              <td><b>Zahlungsbedingung</b></td>
+              <td><span t-field="o.partner_id.property_payment_term"/></td>
+            </tr>
+          </table>
+
+          <t t-if="o.comment">
+            <div class="vspace-s" t-field="o.comment"/>
+          </t>
+
+          <t t-if="section">
+            <div class="vspace-s" t-raw="section.closing"/>
+          </t>
         </div>
       </xpath>      
     </template>
