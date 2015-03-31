@@ -3,19 +3,12 @@
   <data>
   
     <!-- invoice -->
-    <template id="report_invoice_document_euratel" 
+    <template id="report_invoice_document_amamedis" 
       inherit_id="account.report_invoice_document">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->
-          <t t-if="o and 'section_id' in o">
-            <t t-set="section" t-value="o.section_id"/>
-          </t>
-          <t t-if="o and not 'section_id' in o">
-            <t t-if="o.partner_id and 'section_id' in o.partner_id">
-              <t t-set="section" t-value="o.partner_id.section_id"/>
-            </t>
-          </t>
+          <t t-set="section" t-value="o.partner_id.section_id"/>
 
           <t t-call="report.external_report_sender"/>
           <div>&amp;nbsp;</div>
@@ -200,7 +193,7 @@
           
           <table class="fullwidth vspace-s">
             <tr t-if="o.partner_id.property_payment_term">
-              <td><b>Zahlungsbedingung</b></td>
+              <td class="bold-35">Zahlungsbedingung</td>
               <td><span t-field="o.partner_id.property_payment_term"/></td>
             </tr>
           </table>
