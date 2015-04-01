@@ -167,7 +167,7 @@
                       <td> </td>
                       <td>
                         <img t-if="l.product_id.image" 
-                          t-att-src="'data:image/png;base64,%s' % l.product_id.image_medium" 
+                          t-att-src="'data:image/png;base64,%s' % l.product_id.image" 
                           style="width:100%"/>
                       </td>
                     </tr> 

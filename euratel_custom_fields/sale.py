@@ -37,6 +37,7 @@ class amamedis_sales_team(osv.osv):
 
     _columns = {
             'from_email' : fields.char('Absenderemail', help="Emailadresse mit der Emails aus dem System versand werden."),
+            'signature' : fields.html('Signatur', help="Signatur in Emails"),
             'from_line' : fields.char('Absenderzeile', help="Adresszeile für ausgehende Dokumente"),
             'footer' : fields.html('Fußzeile', help="Fußzeile für externe Dokumente"),
             'contact' : fields.html('Ansprechpartner', help="Ansprechpartner welche in ausgehenden Dokumenten angezeigt werden."),

@@ -19,6 +19,7 @@
           <page string="Report-Konfiguration">
             <group>
               <field name="from_email"/>
+              <field name="signature"/>
               <field name="from_line"/>
               <field name="contact"/>
               <field name="closing"/>
