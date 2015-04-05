@@ -42,8 +42,9 @@ class DHLShipment(models.Model):
     splitted_output = out.split('\n')
     out_dict = {}
     for pair in splitted_output:
-      splitted_pair = pair.split("=")
-      out_dict[splitted_pair[0]] = splitted_pair[1]
+      if '==' in pair:
+        splitted_pair = pair.split("==")
+        out_dict[splitted_pair[0]] = splitted_pair[1]
     return out_dict
 
 '''
@@ -61,10 +62,11 @@ class StockDHLShipment(models.Model):
   keys that have a value assigned to it.
   '''
   def _assamble_shipment_arguments(self, vals):
-    res = ''
+    res = []
     for key, value in vals.iteritems():
       if value:
-        res += key + '=\"' + value + '\" '
+        argument = [key + '=' + value]
+        res.extend(argument)
     return res
 
   '''
@@ -92,7 +94,10 @@ class StockDHLShipment(models.Model):
             }
     arguments = self._assamble_shipment_arguments(vals)
     # Call Java program
-    out, err = Popen(["./dhl.jar", arguments], stdin=PIPE, stdout=PIPE,
+    program_name = "./dhl.jar"
+    command = [program_name]
+    command.extend(arguments)
+    out, err = Popen(command, stdin=PIPE, stdout=PIPE,
             stderr=PIPE, cwd="/opt/dhl").communicate()
     # Raise error if we get content in stderr
     if err != '':
