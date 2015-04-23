@@ -9,18 +9,17 @@
       <field name="arch" type="xml">
         <form string="Versandschein">
           <header>
-            <button name="delete_shipment" string="Versandschein löschen" class="oe_highlight"/>
+            <!--button name="unlink" string="Versandschein löschen" class="oe_highlight"/-->
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
             <h1>
               <label string="Versandschein"/>
-              <field name="shipment_id" class="oe_inline" readonly="True"/>
+              <field name="name" class="oe_inline" readonly="True"/>
             </h1>
             <group>
-              <field name="delivery_slip"/>
-              <field name="partner_id"/>
-              <field name="date"/>
+              <field name="delivery_slip" attrs="{'required' : 'True'}"/>
+              <field name="partner_id" readonly="1"/>
             </group>
           </sheet>
         </form>
@@ -32,45 +31,66 @@
       <field name="model">stock.dhl.shipment</field>
       <field name="arch" type="xml">
         <tree>
-          <field name="shipment_id"/>
+          <field name="name"/>
           <field name="delivery_slip"/>
           <field name="partner_id"/>
           <field name="date"/>
           <field name="state"/>
-          <button name="show_slip" string="Anzeigen" groups="stock.group_stock_user" type="object"/>
         </tree>
       </field>
     </record>
 
     <!-- Add create shipment slip to stock picking view -->
-    <record id="stock_picking_form" model="ir.ui.view">
+    <!--record id="stock_picking_form" model="ir.ui.view">
       <field name="name">stock.picking.dhl.shipment.form</field>
       <field name="model">stock.picking</field>
       <field name="inherit_id" ref="stock.view_picking_form"/>
       <field name="arch" type="xml">
         <xpath expr="//header/button[@name='do_enter_transfer_details']" position="after">
-          <button name="create_shipment" string="Versandschein erzeugen" groups="stock.group_stock_user" type="object" class="oe_highlight"/>
+          <button name="create_shipment" string="DHL Versandschein erzeugen" groups="stock.group_stock_user" type="object" class="oe_highlight"/>
         </xpath>
         <page string="Products" position="after">
           <page string="Versandscheine">
-            <field name="shipments">
+            <field name="shipments" readonly="1">
               <tree>
-                <field name="shipment_id"/>
+                <field name="name"/>
                 <field name="date"/>
                 <field name="state"/>
-                <button name="show_slip" string="Anzeigen" groups="stock.group_stock_user" type="object"/>
               </tree>
             </field>
           </page>
         </page>
       </field>
+    </record-->
+
+    <!-- Add supplier reference to stock move forms-->
+    <record id="stock_move_form" model="ir.ui.view">
+      <field name="name">stock.move.supplier.reference.form</field>
+      <field name="model">stock.move</field>
+      <field name="inherit_id" ref="stock.view_move_form"/>
+      <field name="arch" type="xml">
+        <field name="date" position="before">
+          <field name="supplier_ref"/>
+        </field>
+      </field>
     </record>
 
-    <!-- Menu entries -->
+    <record id="stock_move_picking_form" model="ir.ui.view">
+      <field name="name">stock.move.picking.supplier.reference.form</field>
+      <field name="model">stock.move</field>
+      <field name="inherit_id" ref="stock.view_move_picking_form"/>
+      <field name="arch" type="xml">
+        <field name="date" position="before">
+          <field name="supplier_ref"/>
+        </field>
+      </field>
+    </record>
+
+    <!-- Menu entries>
     <record model="ir.actions.act_window" id="action_dhl_slips">
-      <field name="name">stock.dhl.shipment.action</field>
+      <field name="name">DHL Sendescheine</field>
       <field name="res_model">stock.dhl.shipment</field>
-      <field name="view_mode">tree</field>
+      <field name="view_mode">tree,form</field>
       <field name="view_id" ref="dhl_shipment_tree"/>
     </record>
 
@@ -79,7 +99,7 @@
       id="stock.dhl_slips"
       sequence="5"
       parent="stock.menu_traceability"
-      action="action_dhl_slips"/>
+      action="action_dhl_slips"/-->
 
   </data>
 </openerp>

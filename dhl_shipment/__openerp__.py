@@ -8,7 +8,10 @@ Ermöglicht das Erstellen und Löschen von DHL Sendescheinen.
         """,
     'author': 'artmin IT-Dienstleistungen',
     'depends': ['stock'],
-    'data': ['views/dhl_shipment_view.xml'],
+    'data': [
+        'views/dhl_shipment_view.xml',
+        'security/ir.model.access.csv',
+        ],
     'installable': True,
     'auto-install' : False,
 }
