@@ -187,3 +187,17 @@ class StockMove(models.Model):
 
   # Columns
   supplier_ref = fields.Char(string="Auftragsnr.", help="Auftragsnummer desLieferanten")
+
+'''
+This class is used to create several delivery slips for selected delivery orders
+'''
+class DHLShipmentCreate(models.Model):
+  _name = 'stock.dhl.shipment.create'
+
+  # Columns
+  weight = fields.Float(string="Paketgewicht", default="24.0")
+  shipments = fields.Many2many('stock.picking', string="Lieferschein")
+  
+  # Create several dhl shipment slips according to weight of delivery order
+  def createShipment(self):
+    return

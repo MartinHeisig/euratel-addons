@@ -26,13 +26,13 @@
                     <td><b>Kundennr.</b></td>
                     <td><span t-field="o.partner_id.ref"/></td>
                   </tr>
-                  <tr t-if="o.partner_id.phone">
+                  <tr t-if="o.partner_id.phone or o.partner_id.parent_id and o.partner_id.partner_id.phone">
                     <td><b>Ihre Telefonnummer</b></td>
                     <td t-if="o.partner_id.parent_id">
                       <span t-field="o.partner_id.parent_id.phone"/>
                     </td>
-                    <td t-if="not o.partner_id.parent_id.phone">
-                      <span t-field="o.partner_id.parent_id"/>
+                    <td t-if="not o.partner_id.parent_id">
+                      <span t-field="o.partner_id.phone"/>
                     </td>
                   </tr>
                   <tr t-if="o.name">
@@ -57,9 +57,9 @@
             <div class="title" t-if="o.type == 'out_refund'">RÜCKZAHLUNG</div>
             <div class="title" t-if="o.type == 'in_refund'">LIEFERANTENRÜCKZAHLUNG</div>
             <div class="title" t-if="o.type == 'in_invoice'">LIEFERANTENRECHNUNG</div>
-            <table>
+            <table t-if="o.number">
               <tr>
-                <td t-if="o.number" style="padding-right: 0.5cm">
+                <td style="padding-right: 0.5cm">
                   <t t-if="o.type not in ['in_refund','in_invoice']">
                     <b>Rechnungsnr.</b>
                   </t>
@@ -70,7 +70,7 @@
                 <td t-if="o.date_invoice"><b>Datum</b></td>
               </tr>
               <tr>
-                <td t-if="o.number"><span t-field="o.number"/></td>
+                <td><span t-field="o.number"/></td>
                 <td t-if="o.date_invoice">
                   <span t-esc="datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d').strftime('%d.%m.%Y')"/>
                 </td>
@@ -78,12 +78,6 @@
             </table>
           </div>
  
-          <div class="fullwidth vspace-l">
-            <span class="title hspace-s">
-           </span>
-            <span class="title hspace-m" t-field="o.number"/>
-          </div>
-
           <table id="positions" class="fullwidth vspace-s">
             <thead>
               <tr>
@@ -96,6 +90,11 @@
               </tr>
             </thead>
             <tbody class="sale_tbody top">
+              <tr t-if="o.origin">
+                <td colspan="6" style="padding:0.2cm;">
+                  <b>Auftragsnr.</b> <span t-field="o.origin"/> 
+                </td>
+              </tr>
               <tr t-foreach="o.invoice_line" t-as="l">
                 <td>
                   <b><span t-esc="l_index + 1"/></b>
@@ -118,18 +117,10 @@
                         </t>
                       </td>
                     </tr>
-                    <tr t-if="l.product_id.image">
-                      <td> </td>
-                      <td>
-                        <img t-if="l.product_id.image" 
-                          t-att-src="'data:image/png;base64,%s' % l.product_id.image" 
-                          style="width:100%"/>
-                      </td>
-                    </tr> 
                   </table>
                 </td>
                 <td class="right">
-                  <span t-esc="l.quantity"/>
+                  <span t-field="l.quantity"/>
                 </td>
                 <td class="right">
                   <span t-esc="str('%.4f' % l.price_unit).replace('.',',')"/>&amp;#x202f;€

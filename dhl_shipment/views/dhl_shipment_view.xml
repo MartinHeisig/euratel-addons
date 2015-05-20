@@ -40,6 +40,46 @@
       </field>
     </record>
 
+    <!-- Form for creating DHL delivery slips from delivery orders -->
+    <record id="dhl_delivery_order_create_shipment" model="ir.ui.view">
+      <field name="name">delivery.order.dhl.create.shipment</field>
+      <field name="model">stock.dhl.shipment.create</field>
+      <field name="arch" type="xml">
+        <form string="DHL Versandscheine erzeugen">
+          <field name="weight"/>
+          <field name="shipments" nolabel="1" colspan="4" width="550" height="300">
+            <tree>
+              <field name="name"/>
+              <field name="partner_id"/>
+              <!--field name="weight"/-->
+            </tree>
+          </field>
+          <footer>
+            <button 
+              string="Erzeugen"
+              name="createShipment"
+              type="object"
+              class="oe_highlight"/>
+            oder
+            <button
+              string="Abbrechen"
+              class="oe_link"
+              special="cancel"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <!-- Action that calls the form for creating delivery slips -->
+    <act_window name="DHL Versandscheine erzeugen"
+      res_model="stock.dhl.shipment.create"
+      src_model="stock.picking"
+      view_mode="form"
+      target="new"
+      key2="client_action_multi"
+      multi="True"
+      id="action_view_delivery_shipment_slip_create"/>
+
     <!-- Add create shipment slip to stock picking view -->
     <!--record id="stock_picking_form" model="ir.ui.view">
       <field name="name">stock.picking.dhl.shipment.form</field>

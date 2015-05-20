@@ -67,8 +67,8 @@
                     <td t-if="o.partner_id.parent_id">
                       <span t-field="o.partner_id.parent_id.phone"/>
                     </td>
-                    <td t-if="not o.partner_id.parent_id.phone">
-                      <span t-field="o.partner_id.parent_id"/>
+                    <td t-if="not o.partner_id.parent_id">
+                      <span t-field="o.partner_id.phone"/>
                     </td>
                   </tr>
                   <tr t-if="o.client_order_ref or o.client_order_date">
@@ -163,14 +163,14 @@
                       <td><b>Liefertermin</b></td>
                       <td><span t-field="o.delivery_date"/></td>
                     </tr>
-                    <tr t-if="l.product_id.image">
+                    <!--tr t-if="l.product_id.image">
                       <td> </td>
                       <td>
                         <img t-if="l.product_id.image" 
                           t-att-src="'data:image/png;base64,%s' % l.product_id.image" 
                           style="width:100%"/>
                       </td>
-                    </tr> 
+                    </tr--> 
                   </table>
                </td>
                 <td class="right">
