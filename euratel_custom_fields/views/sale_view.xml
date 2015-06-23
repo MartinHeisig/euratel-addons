@@ -39,6 +39,19 @@
           <field name="client_order_date"/>
           <field name="delivery_date"/>
         </field>
+        <field name="partner_invoice_id" position="replace">
+          <field name="partner_invoice_id"
+            groups="sale.group_delivery_invoice_address"
+            context="{'default_type':'invoice', 'show_street': 1}"
+            options="{'always_reload': True}"/>
+        </field>
+        <field name="partner_shipping_id" position="replace">
+          <field name="partner_shipping_id"
+            on_change="onchange_delivery_id(company_id, partner_id, partner_shipping_id, fiscal_position)"
+            groups="sale.group_delivery_invoice_address"
+            context="{'default_type':'delivery', 'show_street': 1}"
+            options="{'always_reload': True}"/>
+        </field>
       </field>
     </record>
 
