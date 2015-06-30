@@ -1,0 +1,66 @@
+<?xml version="1.0" ?>
+<openerp>
+  <data>
+
+    <!-- Answers -->
+    <record model="ir.ui.view" id="view_answer_tree">
+      <field name="name">crm.profiling.answer.tree</field>
+      <field name="model">crm_profiling.answer</field>
+      <field name="inherit_id" ref="crm_profiling.view_answer"/>
+      <field name="arch" type="xml">
+        <field name="name" position="after">
+          <field name="sequence"/>
+        </field>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_answer_form">
+      <field name="name">crm.profiling.answer.form</field>
+      <field name="model">crm_profiling.answer</field>
+      <field name="inherit_id" ref="crm_profiling.view_answer_form"/>
+      <field name="arch" type="xml">
+        <field name="name" position="after">
+          <field name="sequence"/>
+        </field>
+      </field>
+    </record>
+
+    <!-- Questions -->
+    <record model="ir.ui.view" id="view_question_tree">
+      <field name="name">crm.profiling.questions.tree</field>
+      <field name="model">crm_profiling.question</field>
+      <field name="inherit_id" ref="crm_profiling.view_question_tree"/>
+      <field name="arch" type="xml">
+        <field name="name" position="after">
+          <field name="sequence"/>
+        </field>
+      </field>
+    </record>
+      
+    <record model="ir.ui.view" id="view_question_form">
+      <field name="name">crm.profiling.questions.form</field>
+      <field name="model">crm_profiling.question</field>
+      <field name="inherit_id" ref="crm_profiling.view_question_form"/>
+      <field name="arch" type="xml">
+        <field name="name" position="after">
+          <field name="sequence"/>
+        </field>
+        <xpath expr="//field/tree/field[@name='name']" position="after">
+          <field name="sequence"/>
+        </xpath>
+      </field>
+    </record>
+
+    <!-- Partner -->
+    <record model="ir.ui.view" id="view_partner_form">
+      <field name="name">res.partner.profiling.remark</field>
+      <field name="model">res.partner</field>
+      <field name="inherit_id" ref="crm_profiling.view_partner_form"/>
+      <field name="arch" type="xml">
+        <field name="answers_ids" position="after">
+          <field name="profiling_remarks" placeholder="Zusätzliche Bemerkungen"/>
+        </field>
+      </field>
+    </record>
+  </data>
+</openerp>
