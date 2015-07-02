@@ -66,3 +66,12 @@ class euratel_partner(osv.osv):
                 name = "%s <%s>" % (name, record.email)
             res.append((record.id, name))
         return res
+
+    ''' Override function for getting fields which should be copied to partner
+    contact => This keeps phone, mobile, email and fax in sync, which is not
+    what we want.
+    def _address_fields(self, cr, uid, context=None):
+        fieldList = super(euratel_partner, self)._address_fields(cr, uid, context)
+        fieldList.extend(['fax','phone','email','mobile'])
+        return fieldList
+    '''
