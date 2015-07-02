@@ -57,6 +57,7 @@
         <!-- first name on partner contacts kanban view -->
         <xpath expr="//h4//a//field[@name='name']" position="after">
           <t t-if="record.first_name.raw_value"><br/><field name="first_name"/></t>
+          <t t-if="record.category_id.raw_value"><br/><field name="category_id"/></t>
         </xpath>
         <!-- City and street -->
         <xpath expr="//td[@class='oe_kanban_title1']//i" position="before">
