@@ -56,15 +56,8 @@
         </page>
         <!-- first name on partner contacts kanban view -->
         <xpath expr="//h4//a//field[@name='name']" position="after">
-          <div>
-            <t t-if="record.first_name.raw_value"><br/><field name="first_name"/></t>
-            <t t-if="record.category_id.raw_value">
-              <br/>
-              <field name="category_id">
-                <field name="name"/>
-              </field>
-            </t>
-          </div>
+          <t t-if="record.first_name.raw_value"><br/><field name="first_name"/></t>
+          <t t-if="record.category_id.raw_value"><br/><field name="category_id"/></t>
         </xpath>
         <!-- City and street -->
         <xpath expr="//td[@class='oe_kanban_title1']//i" position="before">
@@ -79,9 +72,13 @@
         <xpath expr="//form[@string='Contact']//field[@name='category_id']" position="before">
           <field name="first_name" placeholder="Vorname" style="width: 70%"/>
         </xpath>
+        <!-- fax on pop-up -->
+        <xpath expr="//form[@string='Contact']//field[@name='mobile']" position="after">
+          <field name="fax"/>
+        </xpath>
         <!-- branch ids in pop-up -->
         <xpath expr="//form[@string='Contact']//field[@name='supplier']" position="before">
-          <h2>Zugeh√rige Filialen</h2>
+          <h3>Zugeh√∂rige Filialen</h3>
           <field name="branch_ids">
             <tree string="Filiale Details">
               <field name="name"/>
