@@ -17,9 +17,6 @@
             class="textbox-right"
             id="delivery">
             <p class="normal">Lieferung an</p>
-            <div t-if="o.partner_id.parent_id">
-              <span t-field="o.partner_id.parent_id.name"/>
-            </div>
             <div>
               <t t-if="o.partner_id.first_name">
                 <span t-field="o.partner_id.first_name"/>
@@ -35,17 +32,17 @@
           </div>
 
           <div class="vspace-xs clearleft left" id="addressee">
-            <div t-if="not o.partner_id.is_company" 
-              t-field="o.partner_id.parent_id.name"/> 
-            <div>
-              <t t-if="o.partner_id.first_name">
-                <span t-field="o.partner_id.first_name"/>
-              </t>
-              <span t-field="o.partner_id.name"/>
-            </div>
+            <t t-if="not o.partner_id.is_company">
+              <div t-field="o.partner_id.parent_id.name"/> 
+            </t>
+            <t t-if="o.partner_id.first_name">
+              <span t-field="o.partner_id.first_name"/>
+            </t>
+            <span t-field="o.partner_id.name"/><br/>
             <div t-field="o.partner_id.street"/>
-            <div t-if="o.partner_id.street2"
-              t-field="o.partner_id.street2"/>
+            <t t-if="o.partner_id.street2">
+              <div t-field="o.partner_id.street2"/>
+            </t>
             <p/>
             <span t-field="o.partner_id.zip"/>
             <span t-field="o.partner_id.city"/> 
