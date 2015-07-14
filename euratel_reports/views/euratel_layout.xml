@@ -5,10 +5,9 @@
     <!-- template for addressee-->
     <template id="report.external_report_to">
       <div class="vspace-xs clearleft" id="addressee">
-        <t t-if="not o.partner_id.is_company">
-          <t t-if="o.partner_id.name != o.partner_id.parent_id.name"> 
-            <div t-field="o.partner_id.parent_id.name"/>
-          </t>
+        <!-- Show parent id name, when partner is not a company -->
+        <t t-if="not o.partner_id.is_company and o.partner_id.parent_id">
+          <div t-field="o.partner_id.parent_id.name"/>
         </t>
         <span t-field="o.partner_id.first_name"/>
         <span t-field="o.partner_id.name"/><br/>
