@@ -37,9 +37,9 @@
         <t t-set="section" t-value="o.partner_id.section_id"/>
 
         <div t-if="section" class="footer small">
-          <div class="right">
+          <!--div class="right">
             <span class="page"/> / <span class="topage"/>
-          </div>
+          </div-->
           <div style="width:100%; margin:auto;" t-raw="section.footer"/>
         </div>
       </xpath>
