@@ -103,11 +103,11 @@
                   <!-- Details -->
                   <table style="width:100%">
                     <tr t-if="l.product_id.default_code">
-                      <td><b>Artikelnr.</b></td>
+                      <td class="details_category">Artikelnr.</td>
                       <td><span t-field="l.product_id.default_code"/></td>
                     </tr>
                     <tr>
-                      <td><b>Beschreibung</b></td>
+                      <td class="details_category">Beschreibung</td>
                       <td>
                         <t t-if="'] ' in l.name">
                           <span t-esc="(l.name).split('] ')[1]"/>
@@ -123,14 +123,13 @@
                   <span t-field="l.quantity"/>
                 </td>
                 <td class="right">
-                  <span t-esc="str('%.4f' % l.price_unit).replace('.',',')"/>&amp;#x202f;€
+                  <span t-esc="'{:,.4f}'.format(l.price_unit).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                 </td>
                 <td class="right">
                   <span t-field="l.uos_id.name"/>
                 </td>
                 <td class="right">
-                  <span t-field="l.price_subtotal"
-                    t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                  <span t-esc="'{:,.2f}'.format(l.price_subtotal).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                 </td>
               </tr>
               
@@ -144,14 +143,14 @@
                   <td>&amp;nbsp;</td>
                   <td colspan="4">Zwischensumme 7&amp;#x202f;%</td>
                   <td class="right">
-                    <span t-field="tax.base"/> €
+                    <span t-esc="'{:,.2f}'.format(tax.base).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                   </td>
                 </tr>
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 19%'">
                   <td>&amp;nbsp;</td>
                   <td colspan="4">Zwischensumme 19&amp;#x202f;%</td>
                   <td class="right">
-                    <span t-field="tax.base"/> €
+                    <span t-esc="'{:,.2f}'.format(tax.base).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                   </td>
                 </tr>
               </t>
@@ -176,7 +175,7 @@
                 <td>&amp;nbsp;</td>
                 <td class="sum line" colspan="4">Rechnungsbetrag</td>
                 <td class="sum line right">
-                  <span t-field="o.amount_total"/>&amp;#x202f;€
+                  <span t-esc="'{:,.2f}'.format(o.amount_total).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                 </td>
               </tr>
             </tbody>

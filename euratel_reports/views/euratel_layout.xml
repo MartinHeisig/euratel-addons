@@ -198,6 +198,11 @@
         width: 3.5 cm;
         font-weight: bold;
         }
+      .details_category {
+        font-weight: bold;
+        width: 75px;
+        vertical-align: top;
+        }
     </template>
     
     <!-- Override margins in paper format -->
@@ -209,7 +214,7 @@
       <field name="page_width">0</field>
       <field name="orientation">Portrait</field>
       <field name="margin_top">55</field>
-      <field name="margin_bottom">32</field>
+      <field name="margin_bottom">20</field>
       <field name="margin_left">20</field>
       <field name="margin_right">9</field>
       <field name="header_line" eval="False" />
