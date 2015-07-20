@@ -68,11 +68,13 @@
         <xpath expr="//td[@class='oe_kanban_title1']//div[@t-if='record.fax.raw_value']" position="replace">
           <div/>
         </xpath>
-        <!-- first name and sex on pop-up -->
+        <!-- first name, title and gender on pop-up -->
         <xpath expr="//form[@string='Contact']//field[@name='category_id']" position="before">
           <field name="first_name" placeholder="Vorname" style="width: 70%"/>
-          <field name="title" style="width: 70%"/>
-          <field name="gender" style="width: 70%"/>
+        </xpath>
+        <xpath expr="//form[@string='Contact']//field[@name='function']" position="before">
+          <field name="title"/>
+          <field name="gender"/>
         </xpath>
         <!-- fax on pop-up -->
         <xpath expr="//form[@string='Contact']//field[@name='mobile']" position="after">
