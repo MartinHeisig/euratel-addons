@@ -54,7 +54,7 @@
             <div class="title" t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA RECHNUNG</div>
             <div class="title" t-if="o.type == 'out_invoice' and o.state == 'draft'">RECHNUNGSENTWURF</div>
             <div class="title" t-if="o.type == 'out_invoice' and o.state == 'cancel'">STORNIERTE RECHNUNG</div>
-            <div class="title" t-if="o.type == 'out_refund'">RÜCKZAHLUNG</div>
+            <div class="title" t-if="o.type == 'out_refund'">RECHNUNGSKORREKTUR / GUTSCHRIFT</div>
             <div class="title" t-if="o.type == 'in_refund'">LIEFERANTENRÜCKZAHLUNG</div>
             <div class="title" t-if="o.type == 'in_invoice'">LIEFERANTENRECHNUNG</div>
             <table t-if="o.number">
