@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+
+    <!-- form view for dhl deliveries -->
+    <record id="dhl_delivery_form" model="ir.ui.view">
+      <field name="name">dhl.deliver.form</field>
+      <field name="model">dhl.delivery</field>
+      <field name="arch" type="xml">
+        <form>
+          <header>
+            <button string="Stornieren" type="object" name="action_delete"
+            states="new"/>
+            <field name="state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <h2><field name="name"/></h2>
+            <group>
+              <field name="delivery_order" attrs="{'readonly': [('state','!=','new')]}"/>
+              <field name="partner_id" readonly="True"/>
+            </group>
+            <group>
+              <field name="create_date" readonly="True" string="Datum"/>
+              <field name="delivery_date" readonly="True"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- tree view for dhl deliveries -->
+    <record id="dhl_delivery_tree" model="ir.ui.view">
+      <field name="name">dhl.deliver.tree</field>
+      <field name="model">dhl.delivery</field>
+      <field name="arch" type="xml">
+        <tree string="DHL Sendungen">
+          <field name="name"/>
+          <field name="delivery_order"/>
+          <field name="partner_id"/>
+          <field name="create_date" string="Datum"/>
+          <field name="state"/>
+        </tree>
+      </field>
+    </record>
+
+    <!-- search view -->
+    <record model="ir.ui.view" id="dhl_deliery_search_view">
+      <field name="name">dhl.delivery.search</field>
+      <field name="model">dhl.delivery</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="name"/>
+          <field name="partner_id"/>
+          <!-- Add more fields here -->
+          <group string="Gruppieren">
+            <filter name="group_by_delivery_order" string="Lieferschein"
+              context="{'group_by': 'delivery_order'}"/>
+            <filter name="group_by_partner" string="Kunde"
+              context="{'group_by': 'partner_id'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- action that opens list of dhl deliveries -->
+    <record model="ir.actions.act_window" id="action_dhl_delivery">
+      <field name="name">DHL Sendungen</field>
+      <field name="res_model">dhl.delivery</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+      <field name="help" type="html">
+        <p class="oe_view_nocontent_create">
+          Erzeugen Sie hier neue DHL Sendescheine
+        </p>
+      </field>
+    </record>
+
+    <!-- menuitem for dhl deliveries -->
+    <menuitem
+      name="DHL Sendungen"
+      id="stock.dhl_delivery"
+      sequence="5"
+      parent="stock.menu_traceability"
+      action="action_dhl_delivery"/>
+
+    <!-- wizard for creating dhl deliveries from delivery order -->
+    <record model="ir.ui.view" id="wizard_form_view">
+      <field name="name">dhl.delivery.wizard.form</field>
+      <field name="model">dhl.delivery.wizard</field>
+      <field name="arch" type="xml">
+        <form string="Erzeuge DHL Sendungen">
+          <group>
+            <field name="delivery_order" readonly="True"/>
+          </group>
+          <footer>
+            <button name="create_deliveries" type="object"
+              string="Sendungen anlegen" class="oe_highlight"/>
+            oder
+            <button special="cancel" string="Abbrechen"/>
+          </footer>
+        </form>
+      </field>
+    </record>
+
+    <act_window id="launch_dhl_delivery_wizard"
+      name="Erzeuge DHL Sendungen"
+      src_model="stock.picking"
+      res_model="dhl.delivery.wizard"
+      view_mode="form"
+      target="new"
+      key2="client_action_multi"/>
+
+    <!-- INHERITED VIEWs -->
+
+    <!-- Add dhl deliveries to stock picking form -->
+    <record model="ir.ui.view" id="stock_picking_form">
+      <field name="name">dhl.delivery.stock.picking.form</field>
+      <field name="model">stock.picking</field>
+      <field name="inherit_id" ref="stock.view_picking_form"/>
+      <field name="arch" type="xml">
+        <page string="Additional Info" position="after">
+          <page string="DHL Sendungen">
+            <field name="dhl_deliveries">
+              <tree>
+                <field name="name"/>
+                <field name="create_date"/>
+                <field name="state"/>
+              </tree>
+            </field>
+          </page>
+        </page>
+      </field>
+    </record>
+
+  </data>
+</openerp>
