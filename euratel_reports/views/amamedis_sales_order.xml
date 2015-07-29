@@ -68,6 +68,15 @@
                       <span t-field="o.partner_id.phone"/>
                     </td>
                   </tr>
+                  <tr>
+                    <td><b>Fax</b></td>
+                    <td t-if="o.partner_id.parent_id">
+                      <span t-field="o.partner_id.parent_id.fax"/>
+                    </td>
+                    <td t-if="not o.partner_id.parent_id">
+                      <span t-field="o.partner_id.fax"/>
+                    </td>
+                  </tr>
                   <tr t-if="o.client_order_ref or o.client_order_date">
                     <td><br/><b>Ihre Bestellung</b></td>
                     <td>
