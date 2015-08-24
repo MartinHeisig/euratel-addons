@@ -34,3 +34,22 @@ class StockDhlDelivery(models.Model):
 
     dhl_deliveries = fields.One2many(comodel_name='dhl.delivery',
             inverse_name='delivery_order', string="DHL Sendescheine")
+
+class CompanyDhlDelivery(models.Model):
+    _inherit = 'res.company'
+
+    dhl_ekp = fields.Char('EKP', size=10,
+            help="Einheitliche Kunden- und Produktnummer.")
+    dhl_partner_id = fields.Char('Partner ID', size=2,
+            help="Teilnehmernummer")
+    dhl_intraship_user = fields.Char('Intraship Benutzername')
+    dhl_intraship_password = fields.Char('Intraship Passwort')
+    dhl_test = fields.Boolean('Testbetrieb', 
+            help="Lässt alle DHL Abläufe im Testbetrieb laufen. "
+            "Es werden keine echten Versandscheine erzeugt.")
+class ProductDhlDelivery(models.Model):
+    _inherit = 'product.template'
+
+    pcs_per_box = fields.Integer('Gebindegröße',
+            help="Anzahl der Produkte, die in ein Paket passen. "
+            "Menge wird in der Standardmengeneinheit angegeben.")

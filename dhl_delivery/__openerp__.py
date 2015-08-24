@@ -26,6 +26,7 @@
     # always loaded
     'data': [
         'views/dhl_delivery.xml',
+        'wizard.xml',
         'security/ir.model.access.csv',
     ],
 }

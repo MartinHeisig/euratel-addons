@@ -83,33 +83,6 @@
       parent="stock.menu_traceability"
       action="action_dhl_delivery"/>
 
-    <!-- wizard for creating dhl deliveries from delivery order -->
-    <record model="ir.ui.view" id="wizard_form_view">
-      <field name="name">dhl.delivery.wizard.form</field>
-      <field name="model">dhl.delivery.wizard</field>
-      <field name="arch" type="xml">
-        <form string="Erzeuge DHL Sendungen">
-          <group>
-            <field name="delivery_order" readonly="True"/>
-          </group>
-          <footer>
-            <button name="create_deliveries" type="object"
-              string="Sendungen anlegen" class="oe_highlight"/>
-            oder
-            <button special="cancel" string="Abbrechen"/>
-          </footer>
-        </form>
-      </field>
-    </record>
-
-    <act_window id="launch_dhl_delivery_wizard"
-      name="Erzeuge DHL Sendungen"
-      src_model="stock.picking"
-      res_model="dhl.delivery.wizard"
-      view_mode="form"
-      target="new"
-      key2="client_action_multi"/>
-
     <!-- INHERITED VIEWs -->
 
     <!-- Add dhl deliveries to stock picking form -->
@@ -132,5 +105,42 @@
       </field>
     </record>
 
+    <!-- Add dhl settings to company tab -->
+    <record id="company_form" model="ir.ui.view">
+      <field name="name">res.company.dhl.delivery.form</field>
+      <field name="model">res.company</field>
+      <field name="inherit_id" ref="base.view_company_form"/>
+      <field name="arch" type="xml">
+        <page string="Report Configuration" position="after">
+          <page string="DHL Versand">
+            <group string="Zugangsdaten">
+              <group>
+                <field name="dhl_ekp"/>
+                <field name="dhl_partner_id"/>
+              </group>
+              <group>
+                <field name="dhl_intraship_user"/>
+                <field name="dhl_intraship_password"/>
+              </group>
+            </group>
+            <group string="Modus">
+             <field name="dhl_test"/>
+           </group>
+          </page>
+        </page>
+      </field>
+    </record>
+
+    <!-- Extra field in product template -->
+    <record id="product_form" model="ir.ui.view">
+      <field name="name">product.template.dhl.delivery.form</field>
+      <field name="model">product.template</field>
+      <field name="inherit_id" ref="product.product_template_form_view"/>
+      <field name="arch" type="xml">
+        <field name="uom_id" position="after">
+          <field name="pcs_per_box"/>
+        </field>
+      </field>
+    </record>
   </data>
 </openerp>
