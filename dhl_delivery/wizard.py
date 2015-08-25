@@ -185,6 +185,12 @@ class DHLStockTransferDetails(models.TransientModel):
                 # Make directory if no existing
                 try:
                     os.makedirs(oc_path) 
+                except OSError as exception:
+                    if exception.errno != errno.EEXIST:
+                        raise osv.except_osv('DHL Versand',
+                                'Konnte Verzeichnis nicht erstellen \''+ oc_path +
+                                '\' schreiben.')
+                if os.path.isdir(oc_path): 
                     # Write to owncloud directory
                     oc_path += filename
                     pdf.write(oc_path)
@@ -201,11 +207,6 @@ class DHLStockTransferDetails(models.TransientModel):
                     # Execute owncloud syncing
                     out, err = Popen(command, stdin=PIPE, stdout=PIPE,
                             stderr=PIPE).communicate()
-                except OSError as exception:
-                    if exception.errno != errno.EEXIST:
-                        raise osv.except_osv('DHL Versand',
-                                'Konnte nicht in owncloud Verzeichnis \''+ oc_path +
-                                '\' schreiben.')
                 '''
                 # Append pdf to self picking
                 #with open(path, 'rb') as pdf_file:

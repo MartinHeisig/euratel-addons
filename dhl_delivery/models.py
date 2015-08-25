@@ -32,9 +32,9 @@ class DhlDelivery(models.Model):
     @api.one
     def unlink(self):
         # First call java function to delete delivery slip at DHL
-        action_delete()
+        self.action_delete()
         # If no error occured delete shipment
-        super(DHLShipment, self).unlink()
+        super(DhlDelivery, self).unlink()
         return
  
     # Actions
