@@ -123,6 +123,16 @@
                 <field name="dhl_intraship_password"/>
               </group>
             </group>
+            <group string="OwnCloud">
+              <group>
+                <field name="oc_user"/>
+                <field name="oc_password"/>
+              </group>
+              <group>
+                <field name="oc_local_dir"/>
+                <field name="oc_remote_dir"/>
+              </group>
+            </group>
             <group string="Modus">
              <field name="dhl_test"/>
            </group>

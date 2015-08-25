@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from openerp import models, fields, api
+from openerp.exceptions import except_orm
+from constants import *
+
+from subprocess import Popen, PIPE
 
 class DhlDelivery(models.Model):
     _name = 'dhl.delivery'
@@ -24,10 +28,36 @@ class DhlDelivery(models.Model):
              "DHL Sendungen können nicht dupliziert werden."),
             ]
 
+    # Override delete method, so that shipment is deleted at DHL too.
+    @api.one
+    def unlink(self):
+        # First call java function to delete delivery slip at DHL
+        action_delete()
+        # If no error occured delete shipment
+        super(DHLShipment, self).unlink()
+        return
+ 
     # Actions
     @api.one
     def action_delete(self):
+        if self.name:
+            # Check if sandbox is active
+            test = self.delivery_order.company_id.dhl_test and TEST + '=True' or ''
+            # Delete shipment at DHL -  Call Java program
+            command = ["java", "-jar", "./dhl.jar"]
+            # Add arguments
+            arguments = [ METHOD + "=deleteShipment",
+                    SHIPPING_NUMBER + "=" + self.name,
+                    test]
+            command.extend(arguments)
+            out, err = Popen(command, stdin=PIPE, stdout=PIPE,
+                    stderr=PIPE, cwd="/opt/dhl").communicate()
+            # Raise error if we get content in stderr
+            if err != '':
+                raise except_orm('DHL Versand', err)
+                return
         self.state = 'deleted'
+        return
 
 class StockDhlDelivery(models.Model):
     _inherit = 'stock.picking'
@@ -37,7 +67,7 @@ class StockDhlDelivery(models.Model):
 
 class CompanyDhlDelivery(models.Model):
     _inherit = 'res.company'
-
+    # DHL parameters
     dhl_ekp = fields.Char('EKP', size=10,
             help="Einheitliche Kunden- und Produktnummer.")
     dhl_partner_id = fields.Char('Partner ID', size=2,
@@ -47,6 +77,12 @@ class CompanyDhlDelivery(models.Model):
     dhl_test = fields.Boolean('Testbetrieb', 
             help="Lässt alle DHL Abläufe im Testbetrieb laufen. "
             "Es werden keine echten Versandscheine erzeugt.")
+    # Owncloud Login and directories
+    oc_user = fields.Char('Benutzername')
+    oc_password = fields.Char('Passwort')
+    oc_local_dir = fields.Char('Lokales Verzeichnis')
+    oc_remote_dir = fields.Char('Entferntes Verzeichnis')
+
 class ProductDhlDelivery(models.Model):
     _inherit = 'product.template'
 

@@ -8,7 +8,13 @@ from subprocess import Popen, PIPE
 import urllib
 import PyPDF2
 import base64
+import datetime
+import os
+import errno
 
+from constants import *
+
+'''
 # constants for creating arguments
 
 # Sender
@@ -44,6 +50,7 @@ INTRASHIP_USER = "Intraship_user"
 INTRASHIP_PASSWORD = "Intraship_password"
 EKP = "EKP"
 PARTNER_ID = "Partner_ID"
+'''
 
 class DHLStockTransferDetails(models.TransientModel):
     _inherit = 'stock.transfer_details'
@@ -73,6 +80,9 @@ class DHLStockTransferDetails(models.TransientModel):
             out_dict[splitted_pair[0]] = splitted_pair[1]
         return out_dict
 
+    '''
+    Override method for sending a delivery to enable creating dhl deliveries
+    '''
     @api.one
     def do_detailed_transfer(self):
         if self.create_dhl_delivery:
@@ -165,7 +175,7 @@ class DHLStockTransferDetails(models.TransientModel):
                             'delivery_order' : self.picking_id.id,
                             'url' : shipment_url,
                             })
-                        # Assign delivery order to delivery order    
+                        # Assign dhl delivery to delivery order    
                         self.picking_id.dhl_deliveries |= dhl_delivery
                         # Download PDF and merge
                         path = "/opt/dhl/pdf/" + shipment_number + ".pdf"
@@ -187,7 +197,7 @@ class DHLStockTransferDetails(models.TransientModel):
                             raise osv.except_osv('DHL Versand - Java',
                                     status_message)
                 # Close PDF file and save
-                filename = 'DHL-' + self.picking_id.name + ".pdf"
+                filename = self.picking_id.name + "-DHL.pdf"
                 filename = filename.replace('/','_')
                 path = "/opt/dhl/pdf/" + filename
                 try: 
@@ -196,6 +206,45 @@ class DHLStockTransferDetails(models.TransientModel):
                   raise osv.except_osv('DHL Versand',
                       'Konnte Sammelpdf nicht speicher\n' +
                       'Pfad: ' + path)
+                
+                # Also save pdf to synced owncloud directory
+                if company.oc_local_dir:
+                    if not company.oc_local_dir[:-1] == '/':
+                      oc_path = company.oc_local_dir + '/'
+                    else:
+                      oc_path = company.oc_local_dir
+                else:
+                    raise osv.except_osv('DHL Versand Einstellungen',
+                            'Bitte lokales owncloud Verzeichnis angeben.')
+                # Get name of the year and supplier
+                year = datetime.datetime.now().strftime('%Y')
+                supplier = sender.name.replace(' ','_').replace('/','_')
+                oc_path += year + '/' + supplier + '/DHL_Sendescheine/unversendet/'
+                # Make directory if no existing
+                try:
+                    os.makedirs(oc_path) 
+                    # Write to owncloud directory
+                    oc_path += filename
+                    pdf.write(oc_path)
+                    # Sync owncloud
+                    command = ['owncloudcmd']
+                    # Arguments
+                    arguments = [
+                            '-u', company.oc_user,
+                            '-p', company.oc_password,
+                            oc_path,
+                            company.oc_remote_dir
+                            ]
+                    command.extend(arguments)
+                    # Execute owncloud syncing
+                    out, err = Popen(command, stdin=PIPE, stdout=PIPE,
+                            stderr=PIPE).communicate()
+                except OSError as exception:
+                    if exception.errno != errno.EEXIST:
+                        raise osv.except_osv('DHL Versand',
+                                'Konnte nicht in owncloud Verzeichnis \''+ oc_path +
+                                '\' schreiben.')
+                '''
                 # Append pdf to self picking
                 #with open(path, 'rb') as pdf_file:
                 #    data = pdf_file.read()
@@ -208,6 +257,7 @@ class DHLStockTransferDetails(models.TransientModel):
                                   + self.picking_id.name,
                   #'datas' : data,
                   })
+                '''
            
         # Call super method
         super(DHLStockTransferDetails, self).do_detailed_transfer()
