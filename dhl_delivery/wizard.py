@@ -20,6 +20,30 @@ class DHLStockTransferDetails(models.TransientModel):
     # Fields
     create_dhl_delivery = fields.Boolean('DHL Paketversand', help="Dieses Kästchen "
         "aktivieren, wenn die Lieferung per DHL Paketversand vorgenommen wird.")
+ 
+    '''
+    Helper function that converts a dictionary of the shipment arguments to a string
+    of arguments using only the keys that have a value assigned to it.
+    '''
+    # Should be removed when change to model is done
+    def _assamble_shipment_arguments(self, vals):
+        res = []
+        for key, value in vals.iteritems():
+          if value:
+            argument = [key + '=' + value]
+            res.extend(argument)
+        return res
+
+    def _parseJavaOutput(self, out):
+        splitted_output = out.split('\n')
+        out_dict = {}
+        for pair in splitted_output:
+          if '==' in pair:
+            splitted_pair = pair.split("==")
+            out_dict[splitted_pair[0]] = splitted_pair[1]
+        return out_dict
+    # End should be removed
+
     
     '''
     Override method for sending a delivery to enable creating dhl deliveries
@@ -89,7 +113,6 @@ class DHLStockTransferDetails(models.TransientModel):
                     PARTNER_ID : company.dhl_partner_id,
                     }
             arguments = self._assamble_shipment_arguments(vals)
-            print arguments
             # Call Java program
             program_name = "./dhl.jar"
             command = ["java", "-jar", "./dhl.jar"]
