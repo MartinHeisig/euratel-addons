@@ -13,6 +13,7 @@ Reports for Euratel GmbH
         'views/euratel_invoice.xml',
         'views/res_company_view.xml',
         'views/amamedis_sales_order.xml',
+        'views/amamedis_delivery_order.xml',
     ],
     'installable': True,
     'auto-install' : False,
