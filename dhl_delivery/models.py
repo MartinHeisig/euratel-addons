@@ -73,14 +73,18 @@ class DhlDelivery(models.Model):
     @api.one
     def action_delete(self):
         if self.name:
+            company = self.delivery_order.company_id
             # Check if sandbox is active
-            test = self.delivery_order.company_id.dhl_test and TEST + '=True' or ''
+            test = company.dhl_test and TEST + '=True' or ''
             # Delete shipment at DHL -  Call Java program
             command = ["java", "-jar", "./dhl.jar"]
             # Add arguments
             arguments = [ METHOD + "=deleteShipment",
                     SHIPPING_NUMBER + "=" + self.name,
-                    test]
+                    INTRASHIP_USER + "=" + company.dhl_intraship_user,
+                    INTRASHIP_PASSWORD + "=" + company.dhl_intraship_password ]
+            if test != '':
+                arguments.append(test)
             command.extend(arguments)
             out, err = Popen(command, stdin=PIPE, stdout=PIPE,
                     stderr=PIPE, cwd="/opt/dhl").communicate()
