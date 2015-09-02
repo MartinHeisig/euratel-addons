@@ -2,9 +2,20 @@
 
 from openerp import models, fields, api
 from openerp.exceptions import except_orm
-from constants import *
+
+from openerp.osv import osv
+from math import ceil
 
 from subprocess import Popen, PIPE
+import urllib
+import PyPDF2
+import base64
+import datetime
+import os
+import errno
+
+from constants import *
+
 
 class DhlDelivery(models.Model):
     _name = 'dhl.delivery'
@@ -27,6 +38,27 @@ class DhlDelivery(models.Model):
              'UNIQUE(name)',
              "DHL Sendungen können nicht dupliziert werden."),
             ]
+
+    '''
+    Helper function that converts a dictionary of the shipment arguments to a string
+    of arguments using only the keys that have a value assigned to it.
+    '''
+    def _assamble_shipment_arguments(self, vals):
+        res = []
+        for key, value in vals.iteritems():
+          if value:
+            argument = [key + '=' + value]
+            res.extend(argument)
+        return res
+
+    def _parseJavaOutput(self, out):
+        splitted_output = out.split('\n')
+        out_dict = {}
+        for pair in splitted_output:
+          if '==' in pair:
+            splitted_pair = pair.split("==")
+            out_dict[splitted_pair[0]] = splitted_pair[1]
+        return out_dict
 
     # Override delete method, so that shipment is deleted at DHL too.
     @api.one
@@ -59,6 +91,21 @@ class DhlDelivery(models.Model):
         self.state = 'deleted'
         return
 
+    '''
+    TODO !
+    Override create method so that DHL deliveries can be created through dhl
+    api.
+    @api.one
+    def create(self, vals):
+        picking_id = vals.get('picking_id')
+        # Handle single delivery slip creation
+        if not 'shipper' in vals:
+            # Get first line of picking
+            if len(picking_id.
+
+        super(DhlDelivery, self).create()
+    '''
+
 class StockDhlDelivery(models.Model):
     _inherit = 'stock.picking'
 
@@ -86,6 +133,6 @@ class CompanyDhlDelivery(models.Model):
 class ProductDhlDelivery(models.Model):
     _inherit = 'product.template'
 
-    pcs_per_box = fields.Integer('Gebindegröße',
+    pcs_per_box = fields.Float('Gebindegröße',
             help="Anzahl der Produkte, die in ein Paket passen. "
             "Menge wird in der Standardmengeneinheit angegeben.")
