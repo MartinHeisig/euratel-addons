@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+  <data>
+    <!-- delivery slip -->
+    <!-- deliver.report_shipping2 muss gelöscht werden!!! -->
+    <template id="report_picking" inherit_id="stock.report_picking">
+      <xpath expr="//div[@class='page']" position="replace">
+        <div class="page">
+          <!-- Multicompany -->
+          <t t-set="section" t-value="o.partner_id.section_id"/>
+
+          <t t-call="report.external_report_sender"/>
+          <div>&amp;nbsp;</div>
+          <t t-call="report.external_report_to"/>
+
+          <!-- Info box -->
+          <table
+            class="fullwidth"
+            style="clear:both; border-top:0.6cm solid white">
+            <tr>
+              <td class="top">
+                <table t-if="o.partner_id.ref or o.partner_id.phone or name"
+                  class="bg-grey small left hspace-s">
+                  <tr t-if="o.partner_id.ref or o.partner_id.parent_id">
+                    <td><b>Kundennr.</b></td>
+                    <td t-if="o.partner_id.ref"><span t-field="o.partner_id.ref"/></td>
+                    <td t-if="o.partner_id.parent_id">
+                      <span t-field="o.partner_id.parent_id.ref"/>
+                    </td>
+                  </tr>
+                  <tr t-if="o.partner_id.phone or o.partner_id.parent_id and o.partner_id.partner_id.phone">
+                    <td><b>Ihre Telefonnummer</b></td>
+                    <td t-if="o.partner_id.parent_id">
+                      <span t-field="o.partner_id.parent_id.phone"/>
+                    </td>
+                    <td t-if="not o.partner_id.parent_id">
+                      <span t-field="o.partner_id.phone"/>
+                    </td>
+                  </tr>
+                  <tr t-if="o.partner_id.parent_id or o.partner_id.fax">
+                    <td><b>Fax</b></td>
+                    <td t-if="o.partner_id.parent_id">
+                      <span t-field="o.partner_id.parent_id.fax"/>
+                    </td>
+                    <td t-if="not o.partner_id.parent_id">
+                      <span t-field="o.partner_id.fax"/>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td t-if="section" style="vertical-align:top; padding-right:0cm">
+                <div class="textbox-right" t-raw="section.contact"/>
+              </td>
+            </tr>
+          </table>
+
+          <div class="textbox-right vspace-m">
+            <div class="title">LIEFERSCHEIN</div>
+            <table t-if="o.name">
+              <tr>
+                <td style="padding-right: 0.5cm">
+                  <b>Nummer</b>
+                </td>
+                <td><b>Datum</b></td>
+              </tr>
+              <tr>
+                <td><span t-field="o.name"/></td>
+                <td>
+                  <span t-esc="datetime.date.today().strftime('%d.%m.%Y')"/>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <table id="positions" class="fullwidth vspace-s">
+            <thead>
+              <tr>
+                <th>POS</th>
+                <th>Artikel</th>
+                <th class="right">Menge</th>
+                <th class="right">Einheit</th>
+              </tr>
+            </thead>
+            <tbody class="sale_tbody top">
+              <tr t-if="o.origin">
+                <td colspan="6" style="padding:0.2cm;">
+                  <b>Auftragsnr.</b> <span t-field="o.origin"/> 
+                </td>
+              </tr>
+              <tr t-foreach="o.move_lines" t-as="l">
+                <td>
+                  <b><span t-esc="l_index + 1"/></b>
+                </td>
+                <td>
+                  <!-- Details -->
+                  <table style="width:100%">
+                    <tr t-if="l.product_id.default_code">
+                      <td class="details_category">Artikelnr.</td>
+                      <td><span t-field="l.product_id.default_code"/></td>
+                    </tr>
+                    <tr>
+                      <td class="details_category">Beschreibung</td>
+                      <td>
+                        <t t-if="'] ' in l.name">
+                          <span t-esc="(l.name).split('] ')[1]"/>
+                        </t>
+                        <t t-if="not '] ' in l.name">
+                          <span t-field="l.name"/>
+                        </t>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+                <td class="right">
+                  <span t-field="l.product_uom_qty"/>
+                </td>
+                <td class="right">
+                  <span t-field="l.product_uom.name"/>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- Wurde gebraucht für report_shipping2, wird versteckt-->
+          <div style="font:0px white">
+            <div name="partner_header"/>
+            <table border="0">
+               <tr><th name="td_sched_date_h"></th></tr>
+               <tr><td name="td_sched_date"></td></tr>
+            </table>
+          </div>
+          <!-- Ende --> 
+        </div>
+      </xpath>
+    </template>
+  </data>
+</openerp>
