@@ -152,7 +152,7 @@ class DHLStockTransferDetails(models.TransientModel):
                                 'herunterladen. Ist das Verzeichnis /opt/dhl/pdf'
                                 'fuer den odoo Benutzer schreibbar und ' +
                                 'vorhanden?\nURL: ' + shipment_url)
-                    # Check for status message    
+                # Check for status message    
                     if '::' in line:
                         splitted_line = line.split("::")
                         status_code = splitted_line[0]
