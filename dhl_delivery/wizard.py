@@ -106,7 +106,7 @@ class DHLStockTransferDetails(models.TransientModel):
                     SH_CONTACT_PHONE : sender.phone,
                     # Options and Credentials
                     METHOD : 'createShipment',
-                    TEST : company.dhl_test and 'True' or None,
+                    TEST : company.dhl_test and 'True' or False,
                     INTRASHIP_USER : company.dhl_intraship_user,
                     INTRASHIP_PASSWORD : company.dhl_intraship_password,
                     EKP : company.dhl_ekp,
