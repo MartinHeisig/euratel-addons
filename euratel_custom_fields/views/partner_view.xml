@@ -26,8 +26,7 @@
       <field name="arch" type="xml">
         <field name="parent_id" position="before">
           <field name="first_name" 
-            placeholder="Vorname" 
-            attrs="{'invisible':[('is_company','=', True)]}"
+            placeholder="Vorname / Firmenzusatz" 
             />
         </field>
         <field name="title" position="after">
@@ -70,7 +69,7 @@
         </xpath>
         <!-- first name, title and gender on pop-up -->
         <xpath expr="//form[@string='Contact']//field[@name='category_id']" position="before">
-          <field name="first_name" placeholder="Vorname" style="width: 70%"/>
+          <field name="first_name" placeholder="Vorname / Firmenzusatz" style="width: 70%"/>
         </xpath>
         <xpath expr="//form[@string='Contact']//field[@name='function']" position="before">
           <field name="title"/>

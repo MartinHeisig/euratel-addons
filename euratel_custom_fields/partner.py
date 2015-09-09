@@ -29,7 +29,7 @@ class euratel_partner(osv.osv):
     _columns = {
         'debit_ref': fields.char('Lastschrift Mandatsreferenz', size=64),
         'bga' : fields.char('BGA', size=64),
-        'first_name' : fields.char('Vorname', size=64),
+        'first_name' : fields.char('Vorname / Firmenname Zusatz', size=64),
         'gender' : fields.selection((('w','weiblich'),('m','männlich')), 
                           'Geschlecht'),
         'branch_ids' : fields.many2many(
@@ -66,12 +66,3 @@ class euratel_partner(osv.osv):
                 name = "%s <%s>" % (name, record.email)
             res.append((record.id, name))
         return res
-
-    ''' Override function for getting fields which should be copied to partner
-    contact => This keeps phone, mobile, email and fax in sync, which is not
-    what we want.
-    def _address_fields(self, cr, uid, context=None):
-        fieldList = super(euratel_partner, self)._address_fields(cr, uid, context)
-        fieldList.extend(['fax','phone','email','mobile'])
-        return fieldList
-    '''
