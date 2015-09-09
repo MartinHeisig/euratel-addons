@@ -91,11 +91,13 @@ class DHLStockTransferDetails(models.TransientModel):
                     RC_CONTACT_EMAIL : self.picking_id.partner_id.email,
                     RC_CONTACT_PHONE : self.picking_id.partner_id.phone,
                     RC_COMPANY_NAME : self.picking_id.partner_id.name,
+                    RC_COMPANY_NAME_2 : self.picking_id.partner_id.first_name,
                     RC_LOCAL_CITY : self.picking_id.partner_id.city,
                     RC_LOCAL_STREET : rc_street,
                     RC_LOCAL_STREETNR : rc_street_nr,
                     RC_LOCAL_ZIP : self.picking_id.partner_id.zip,
                     NUMBER_OF_SHIPMENTS : str(parcels),
+                    CUSTOMER_REFERENCE : self.picking_id.name,
                     # Sender details
                     SH_COMPANY_NAME : sender.name,
                     SH_STREET : sh_street,
@@ -113,6 +115,7 @@ class DHLStockTransferDetails(models.TransientModel):
                     PARTNER_ID : company.dhl_partner_id,
                     }
             arguments = self._assamble_shipment_arguments(vals)
+            print arguments
             # Call Java program
             program_name = "./dhl.jar"
             command = ["java", "-jar", "./dhl.jar"]
