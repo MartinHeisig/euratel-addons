@@ -10,6 +10,7 @@ import PyPDF2
 import base64
 import datetime
 import os
+import shutil
 import errno
 
 from constants import *
@@ -76,6 +77,11 @@ class DHLStockTransferDetails(models.TransientModel):
             if (sender.street == '' or sender.city == '' or sender.zip == ''):
                 raise osv.except_osv(('DHL Versand'), ('Absendeadresse ' +
                     '(Eigentümer des Lagers) ist unvollständig.'))
+            company = self.picking_id.company_id
+            if not company.oc_local_dir:
+                raise osv.except_osv('DHL Versand Einstellungen',
+                            'Bitte lokales owncloud Verzeichnis angeben.')
+
             # Prepare call of Java tool
             # Divide street and street number for sender and reciever
             street_as_list = sender.street.split(' ')
@@ -170,35 +176,36 @@ class DHLStockTransferDetails(models.TransientModel):
                 try: 
                     pdf.write(path)
                 except:
-                  raise osv.except_osv('DHL Versand',
-                      'Konnte Sammelpdf nicht speicher\n' +
-                      'Pfad: ' + path)
-                
-                # Also save pdf to synced owncloud directory
-                if company.oc_local_dir:
-                    if not company.oc_local_dir[:-1] == '/':
-                      oc_path = company.oc_local_dir + '/'
-                    else:
-                      oc_path = company.oc_local_dir
+                    res = {'warning': {
+                                      'title': _('Warnung'),
+                                      'message': _('Konnte Sammelpdf nicht speichern. Pfad: ' + path)
+                                      }
+                          }
+                    return res
+                # Copy pdf to synced owncloud directory
+                if not company.oc_local_dir[:-1] == '/':
+                    oc_path = company.oc_local_dir + '/'
                 else:
-                    raise osv.except_osv('DHL Versand Einstellungen',
-                            'Bitte lokales owncloud Verzeichnis angeben.')
-                # Get name of the year and supplier
+                    oc_path = company.oc_local_dir
+                # Get name of the year and supplier name
                 year = datetime.datetime.now().strftime('%Y')
                 supplier = sender.name.replace(' ','_').replace('/','_')
                 oc_path += year + '/' + supplier + '/DHL_Sendescheine/unversendet/'
-                # Make directory if no existing
+                # Make directory if not existing
                 try:
                     os.makedirs(oc_path) 
                 except OSError as exception:
                     if exception.errno != errno.EEXIST:
-                        raise osv.except_osv('DHL Versand',
-                                'Konnte Verzeichnis nicht erstellen \''+ oc_path +
-                                '\' schreiben.')
+                        msg = 'Konnte Verzeichnis nicht erstellen \'' + oc_path
+                        res = {'warning': {
+                                            'title': _('Warnung'),
+                                            'message': msg,
+                                          }
+                              }
+                        return res
                 if os.path.isdir(oc_path): 
-                    # Write to owncloud directory
-                    oc_path += filename
-                    pdf.write(oc_path)
+                    # Copy pdf to owncloud directory
+                    shutil.copy(path, oc_path)
                     # Sync owncloud
                     command = ['owncloudcmd']
                     # Arguments
