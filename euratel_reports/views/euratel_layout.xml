@@ -7,7 +7,7 @@
       <div class="vspace-xs clearleft" id="addressee">
         <!-- If Partner is a person print parent id, first and last name -->
         <t t-if="not o.partner_id.is_company">
-          <t t-if="o.partner_id.partner_id">
+          <t t-if="o.partner_id.parent_id">
             <div t-field="o.partner_id.parent_id.name"/>
           </t>
           <span t-field="o.partner_id.first_name"/>
