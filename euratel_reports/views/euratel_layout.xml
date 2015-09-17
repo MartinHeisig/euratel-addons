@@ -5,14 +5,22 @@
     <!-- template for addressee-->
     <template id="report.external_report_to">
       <div class="vspace-xs clearleft" id="addressee">
-        <!-- Show parent id name, when partner is not a company -->
+        <!-- If Partner is a person print parent id, first and last name -->
         <t t-if="not o.partner_id.is_company">
-          <t t-if="o.partner_id.parent_id">
+          <t t-if="o.partner_id.partner_id">
             <div t-field="o.partner_id.parent_id.name"/>
           </t>
+          <span t-field="o.partner_id.first_name"/>
+          <span t-field="o.partner_id.name"/><br/>
         </t>
-        <span t-field="o.partner_id.first_name"/>
-        <span t-field="o.partner_id.name"/><br/>
+        <!-- If partner is a company print company name first -->
+        <t t-if="o.partner_id.is_company">
+          <div t-field="o.partner_id.name"/>
+          <t t-if="o.partner_id.first_name">
+            <div t-field="o.partner_id.first_name"/>
+          </t>
+        </t>
+
         <div t-field="o.partner_id.street"/>
         <div class="vspace-xs">
           <span t-field="o.partner_id.zip"/>

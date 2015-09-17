@@ -18,10 +18,21 @@
             id="delivery">
             <p class="normal">Lieferung an</p>
             <div>
-              <t t-if="o.partner_id.first_name">
-                <span t-field="o.partner_id.first_name"/>
+              <!-- If Partner is a person print parent id, first and last name -->
+              <t t-if="not o.partner_shipping_id.is_company">
+                <t t-if="o.partner_shipping_id.partner_id">
+                  <div t-field="o.partner_shipping_id.parent_id.name"/>
+                </t>
+                <span t-field="o.partner_shipping_id.first_name"/>
+                <span t-field="o.partner_shipping_id.name"/><br/>
               </t>
-              <span t-field="o.partner_shipping_id.name"/>
+              <!-- If partner is a company print company name first -->
+              <t t-if="o.partner_shipping_id.is_company">
+                <div t-field="o.partner_shipping_id.name"/>
+                <t t-if="o.partner_shipping_id.first_name">
+                  <div t-field="o.partner_shipping_id.first_name"/>
+                </t>
+              </t>
             </div>
             <div t-field="o.partner_shipping_id.street"/>
             <div t-if="o.partner_shipping_id.street2"
@@ -32,13 +43,21 @@
           </div>
 
           <div class="vspace-xs clearleft left" id="addressee">
+            <!-- If Partner is a person print parent id, first and last name -->
             <t t-if="not o.partner_id.is_company">
-              <div t-field="o.partner_id.parent_id.name"/> 
-            </t>
-            <t t-if="o.partner_id.first_name">
+              <t t-if="o.partner_id.partner_id">
+                <div t-field="o.partner_id.parent_id.name"/>
+              </t>
               <span t-field="o.partner_id.first_name"/>
+              <span t-field="o.partner_id.name"/><br/>
             </t>
-            <span t-field="o.partner_id.name"/><br/>
+            <!-- If partner is a company print company name first -->
+            <t t-if="o.partner_id.is_company">
+              <div t-field="o.partner_id.name"/>
+              <t t-if="o.partner_id.first_name">
+                <div t-field="o.partner_id.first_name"/>
+              </t>
+            </t>
             <div t-field="o.partner_id.street"/>
             <t t-if="o.partner_id.street2">
               <div t-field="o.partner_id.street2"/>
