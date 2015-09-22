@@ -183,6 +183,8 @@
               </tr>
             </tbody>
           </table>
+
+          <div class="vspace-s">Das Lieferdatum entspricht dem Rechnungsdatum.</div>
           
           <table class="fullwidth vspace-s">
             <tr t-if="o.partner_id.property_payment_term">
