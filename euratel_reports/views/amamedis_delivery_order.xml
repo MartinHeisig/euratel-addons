@@ -24,7 +24,7 @@
             style="clear:both; border-top:0.2cm solid white">
             <tr>
               <td class="top">
-                <table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
+                <!--table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
                   class="bg-grey small left hspace-s">
 				  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
                     <td><b>Kundennummer:</b></td>
@@ -64,13 +64,13 @@
                       <t t-if="not o.partner_id.email"><span t-field="o.partner_id.parent_id.email"/></t>
 					</td>
                   </tr>
-                  <!--tr t-if="o.name">
+                  <tr t-if="o.name">
                     <td><br/><b>Ihre Bestellung:</b></td>
                     <td>
                       <br/><span t-field="o.name"/>
                     </td>
-                  </tr-->
-                </table>
+                  </tr>
+                </table-->
               </td>
               <td t-if="section" style="vertical-align:top; padding-right:0cm">
                 <div class="textbox-right" t-raw="section.contact"/>
