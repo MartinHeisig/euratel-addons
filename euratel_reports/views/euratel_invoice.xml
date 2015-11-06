@@ -9,7 +9,12 @@
         <div class="page">
           <!-- Multicompany -->
           <t t-set="section" t-value="o.partner_id.section_id"/>
-
+          <t t-if="not o.partner_id.is_company">
+              <t t-if="o.partner_id.parent_id">
+                  <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+              </t>
+          </t>
+			
           <t t-call="report.external_report_sender"/>
           <div>&amp;nbsp;</div>
           <t t-call="report.external_report_to"/>
@@ -17,29 +22,51 @@
           <!-- Info box -->
           <table
             class="fullwidth"
-            style="clear:both; border-top:0.6cm solid white">
+            style="clear:both; border-top:0.2cm solid white">
             <tr>
               <td class="top">
-                <table t-if="o.partner_id.ref or o.partner_id.phone or name"
+                <table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
                   class="bg-grey small left hspace-s">
-                  <tr t-if="o.partner_id.ref">
-                    <td><b>Kundennr.</b></td>
-                    <td><span t-field="o.partner_id.ref"/></td>
-                  </tr>
-                  <tr t-if="o.partner_id.phone">
-                    <td><b>Ihre Telefonnummer</b></td>
+				  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
+                    <td><b>Kundennummer:</b></td>
                     <td>
-                      <span t-field="o.partner_id.phone"/>
-                    </td>
+                      <t t-if="o.partner_id.is_company"><span t-field="o.partner_id.ref"/></t>
+                      <t t-if="not o.partner_id.is_company"><span t-field="o.partner_id.parent_id.ref"/></t>
+					</td>
                   </tr>
-                  <tr t-if="o.partner_id.fax">
-                    <td><b>Fax</b></td>
+                  <!--tr t-if="not o.partner_id.is_company">
+                    <td><b>Name:</b></td>
                     <td>
-                      <span t-field="o.partner_id.fax"/>
+                      <span t-if="o.partner_id.gender == 'm'">Herr</span>
+                      <span t-if="o.partner_id.gender == 'w'">Frau</span>
+                      <span t-if="o.partner_id.title.shortcut" t-field="o.partner_id.title.shortcut"/>
+                      <span t-if="o.partner_id.first_name" t-field="o.partner_id.first_name"/>
+                      <span t-field="o.partner_id.name"/>
                     </td>
+                  </tr-->
+                  <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
+                    <td><b>Telefonnummer:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="o.partner_id.fax or o.partner_id.parent_id.fax">
+                    <td><b>Fax:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.fax"><span t-field="o.partner_id.fax"/></t>
+                      <t t-if="not o.partner_id.fax"><span t-field="o.partner_id.parent_id.fax"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="o.partner_id.email or o.partner_id.parent_id.email">
+                    <td><b>E-Mail:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/></t>
+                      <t t-if="not o.partner_id.email"><span t-field="o.partner_id.parent_id.email"/></t>
+					</td>
                   </tr>
                   <tr t-if="o.name">
-                    <td><br/><b>Ihre Bestellung</b></td>
+                    <td><br/><b>Ihre Bestellung:</b></td>
                     <td>
                       <br/><span t-field="o.name"/>
                     </td>
@@ -52,19 +79,23 @@
             </tr>
           </table>
 
-          <div class="textbox-right vspace-m">
+          <div class="textbox-right vspace-xs">
             <div class="title" t-if="o.type == 'out_invoice' and (o.state == 'open' or o.state == 'paid')">RECHNUNG</div>
             <div class="title" t-if="o.type == 'out_invoice' and o.state == 'proforma2'">PRO-FORMA RECHNUNG</div>
             <div class="title" t-if="o.type == 'out_invoice' and o.state == 'draft'">RECHNUNGSENTWURF</div>
             <div class="title" t-if="o.type == 'out_invoice' and o.state == 'cancel'">STORNIERTE RECHNUNG</div>
-            <div class="title" t-if="o.type == 'out_refund'">RECHNUNGSKORREKTUR / GUTSCHRIFT</div>
+            <div class="title" t-if="o.type == 'out_refund' and o.state == 'draft'">ENTWURF RECHNUNGSKORREKTUR / GUTSCHRIFT</div>
+            <div class="title" t-if="o.type == 'out_refund' and o.state not in ['draft']">RECHNUNGSKORREKTUR / GUTSCHRIFT</div>
             <div class="title" t-if="o.type == 'in_refund'">LIEFERANTENRÜCKZAHLUNG</div>
             <div class="title" t-if="o.type == 'in_invoice'">LIEFERANTENRECHNUNG</div>
             <table t-if="o.number">
               <tr>
                 <td style="padding-right: 0.5cm">
-                  <t t-if="o.type not in ['in_refund','in_invoice']">
+                  <t t-if="o.type not in ['in_refund','in_invoice','out_refund']">
                     <b>Rechnungsnr.</b>
+                  </t>
+                  <t t-if="o.type in ['out_refund']">
+                    <b>Gutschriftsnr.</b>
                   </t>
                   <t t-if="o.type in ['in_refund','in_invoice']">
                     <b>Zahlungsnr.</b>
@@ -95,7 +126,13 @@
             <tbody class="sale_tbody top">
               <tr t-if="o.origin">
                 <td colspan="6" style="padding:0.2cm;">
-                  <b>Auftragsnr.</b> <span t-field="o.origin"/> 
+                  <t t-if="o.type in ['out_refund']">
+                      <b>Rechnungsnr. </b>
+                  </t>
+                  <t t-if="o.type not in ['out_refund']">
+                      <b>Auftragsnr. </b>
+                  </t>
+                  <span t-field="o.origin"/> 
                 </td>
               </tr>
               <tr t-foreach="o.invoice_line" t-as="l">

@@ -3,11 +3,16 @@
   <data>
     <!-- delivery slip -->
     <!-- deliver.report_shipping2 muss gelöscht werden!!! -->
-    <template id="report_picking" inherit_id="stock.report_picking">
+    <template id="report_picking" inherit_id="stock.report_picking" priority="20">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->
           <t t-set="section" t-value="o.partner_id.section_id"/>
+          <t t-if="not o.partner_id.is_company">
+              <t t-if="o.partner_id.parent_id">
+                  <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+              </t>
+          </t>
 
           <t t-call="report.external_report_sender"/>
           <div>&amp;nbsp;</div>
@@ -16,30 +21,55 @@
           <!-- Info box -->
           <table
             class="fullwidth"
-            style="clear:both; border-top:0.6cm solid white">
+            style="clear:both; border-top:0.2cm solid white">
             <tr>
               <td class="top">
-                <table t-if="o.partner_id.ref or o.partner_id.phone or name"
+                <table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
                   class="bg-grey small left hspace-s">
-                  <tr t-if="o.partner_id.ref or o.partner_id.parent_id">
-                    <td><b>Kundennr.</b></td>
-                    <td t-if="o.partner_id.ref"><span t-field="o.partner_id.ref"/></td>
-                    <td t-if="o.partner_id.parent_id">
-                      <span t-field="o.partner_id.parent_id.ref"/>
-                    </td>
-                  </tr>
-                  <tr t-if="o.partner_id.phone">
-                    <td><b>Ihre Telefonnummer</b></td>
+				  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
+                    <td><b>Kundennummer:</b></td>
                     <td>
-                      <span t-field="o.partner_id.phone"/>
-                    </td>
+                      <t t-if="o.partner_id.is_company"><span t-field="o.partner_id.ref"/></t>
+                      <t t-if="not o.partner_id.is_company"><span t-field="o.partner_id.parent_id.ref"/></t>
+					</td>
                   </tr>
-                  <tr t-if="o.partner_id.fax">
-                    <td><b>Fax</b></td>
+                  <tr t-if="not o.partner_id.is_company">
+                    <td><b>Name:</b></td>
                     <td>
-                      <span t-field="o.partner_id.fax"/>
+                      <t t-if="o.partner_id.gender == 'm'"><span>Herr</span></t>
+                      <t t-if="o.partner_id.gender == 'w'"><span>Frau</span></t>
+                      <t t-if="o.partner_id.title.shortcut"><span t-field="o.partner_id.title.shortcut"/></t>
+                      <t t-if="o.partner_id.first_name"><span t-field="o.partner_id.first_name"/></t>
+                      <span t-field="o.partner_id.name"/>
                     </td>
                   </tr>
+                  <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
+                    <td><b>Telefonnummer:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="o.partner_id.fax or o.partner_id.parent_id.fax">
+                    <td><b>Fax:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.fax"><span t-field="o.partner_id.fax"/></t>
+                      <t t-if="not o.partner_id.fax"><span t-field="o.partner_id.parent_id.fax"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="o.partner_id.email or o.partner_id.parent_id.email">
+                    <td><b>E-Mail:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/></t>
+                      <t t-if="not o.partner_id.email"><span t-field="o.partner_id.parent_id.email"/></t>
+					</td>
+                  </tr>
+                  <!--tr t-if="o.name">
+                    <td><br/><b>Ihre Bestellung:</b></td>
+                    <td>
+                      <br/><span t-field="o.name"/>
+                    </td>
+                  </tr-->
                 </table>
               </td>
               <td t-if="section" style="vertical-align:top; padding-right:0cm">
@@ -48,7 +78,7 @@
             </tr>
           </table>
 
-          <div class="textbox-right vspace-m">
+          <div class="textbox-right vspace-xs">
             <div class="title">LIEFERSCHEIN</div>
             <table t-if="o.name">
               <tr>
@@ -78,7 +108,7 @@
             <tbody class="sale_tbody top">
               <tr t-if="o.origin">
                 <td colspan="6" style="padding:0.2cm;">
-                  <b>Auftragsnr.</b> <span t-field="o.origin"/> 
+                  <b>Auftragsnr. </b> <span t-field="o.origin"/> 
                 </td>
               </tr>
               <tr t-foreach="o.move_lines" t-as="l">
@@ -114,10 +144,30 @@
               </tr>
             </tbody>
           </table>
+
+          <table class="fullwidth vspace-s">
+            <tr t-if="o.carrier_id">
+              <td class="bold-35">Frachtführer</td>
+              <td><span t-field="o.carrier_id.name"/></td>
+            </tr>
+            <tr t-if="o.weight">
+              <td class="bold-35">Gewicht</td>
+              <td><span t-field="o.weight"/></td>
+            </tr>
+            <!--tr t-if="o.number_of_packages">
+              <td class="bold-35">Anzahl der Pakete</td>
+              <td><span t-field="o.number_of_packages"/></td>
+            </tr-->
+          </table>
+
+          <t t-if="o.note">
+            <div class="vspace-s" t-field="o.note"/>
+          </t>
+
           <!-- Wurde gebraucht für report_shipping2, wird versteckt-->
           <div style="font:0px white">
             <div name="partner_header"/>
-            <table border="0">
+            <table border="0" height="0" style="font:0px white">
                <tr><th name="td_sched_date_h"></th></tr>
                <tr><td name="td_sched_date"></td></tr>
             </table>

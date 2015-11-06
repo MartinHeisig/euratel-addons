@@ -8,95 +8,176 @@
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->
-          <t t-set="section" t-value="o.partner_id.section_id"/>
-
-          <t t-call="report.external_report_sender"/>
-          
-          <!-- shipping address != invoice address -->
-          <div 
-            class="textbox-right"
-            id="delivery">
-            <p class="normal">Lieferung an</p>
-            <div>
-              <!-- If Partner is a person print parent id, first and last name -->
-              <t t-if="not o.partner_shipping_id.is_company">
-                <t t-if="o.partner_shipping_id.parent_id">
-                  <div t-field="o.partner_shipping_id.parent_id.name"/>
-                </t>
-                <span t-field="o.partner_shipping_id.first_name"/>
-                <span t-field="o.partner_shipping_id.name"/><br/>
-              </t>
-              <!-- If partner is a company print company name first -->
-              <t t-if="o.partner_shipping_id.is_company">
-                <div t-field="o.partner_shipping_id.name"/>
-                <t t-if="o.partner_shipping_id.first_name">
-                  <div t-field="o.partner_shipping_id.first_name"/>
-                </t>
-              </t>
-            </div>
-            <div t-field="o.partner_shipping_id.street"/>
-            <div t-if="o.partner_shipping_id.street2"
-              t-field="o.partner_shipping_id.street2"/>
-            <p/>
-            <span t-field="o.partner_shipping_id.zip"/>
-            <span t-field="o.partner_shipping_id.city"/> 
-          </div>
-
-          <div class="vspace-xs clearleft left" id="addressee">
-            <!-- If Partner is a person print parent id, first and last name -->
+            <t t-set="section" t-value="o.partner_id.section_id"/>
             <t t-if="not o.partner_id.is_company">
-              <t t-if="o.partner_id.parent_id">
-                <div t-field="o.partner_id.parent_id.name"/>
-              </t>
-              <span t-field="o.partner_id.first_name"/>
-              <span t-field="o.partner_id.name"/><br/>
-            </t>
-            <!-- If partner is a company print company name first -->
-            <t t-if="o.partner_id.is_company">
-              <div t-field="o.partner_id.name"/>
-              <t t-if="o.partner_id.first_name">
-                <div t-field="o.partner_id.first_name"/>
-              </t>
-            </t>
-            <div t-field="o.partner_id.street"/>
-            <t t-if="o.partner_id.street2">
-              <div t-field="o.partner_id.street2"/>
-            </t>
-            <p/>
-            <span t-field="o.partner_id.zip"/>
-            <span t-field="o.partner_id.city"/> 
-          </div>
+                <t t-if="o.partner_id.parent_id">
+                    <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                </t>
+            </t>	
+
+            <t t-call="report.external_report_sender"/>
+          
+            <!-- invoice address != partner address -->
+            <div class="textbox-right" id="invoice">
+                <div class="small" style="padding-top: 0.5cm">
+                    <strong>Rechnungsadresse:</strong>
+                    <!-- If Invoice address is a person print parent id, first and last name -->
+                    <t t-if="not o.partner_invoice_id.is_company">
+                        <div t-if="o.partner_invoice_id.parent_id" t-field="o.partner_invoice_id.parent_id.name"/>
+                        <div>
+                            <span t-if="o.partner_invoice_id.gender == 'm'">Herrn</span>
+                            <span t-if="o.partner_invoice_id.gender == 'w'">Frau</span>
+                            <span t-if="o.partner_invoice_id.title.shortcut" t-field="o.partner_invoice_id.title.shortcut"/>
+                            <span t-field="o.partner_invoice_id.first_name"/>
+                            <span t-field="o.partner_invoice_id.name"/>
+                        </div>
+                    </t>
+                    <!-- If partner is a company print company name first -->
+                    <t t-if="o.partner_invoice_id.is_company">
+                        <div t-field="o.partner_invoice_id.name"/>
+                        <div t-if="o.partner_invoice_id.first_name" t-field="o.partner_invoice_id.first_name"/>
+                    </t>
+                    <div t-field="o.partner_invoice_id.street"/>
+                    <div t-if="o.partner_invoice_id.street2" t-field="o.partner_invoice_id.street2"/>
+                    <div>
+                        <span t-field="o.partner_invoice_id.zip"/>
+                        <span t-field="o.partner_invoice_id.city"/>
+                    </div>
+                    <t t-if="o.partner_invoice_id.country_id">
+                        <div><t t-if="o.partner_invoice_id.country_id.code != 'DE'"><span t-field="o.partner_invoice_id.country_id.name"/></t></div>
+                    </t>
+                </div>
+            </div>
+
+            <div class="vspace-xs clearleft left small" id="addressee">
+                <div class="x-small" t-if="not o.partner_id.country_id or not o.partner_id.street2">&#160;</div>
+                <!-- If Partner is a person print parent id, first and last name -->
+                <t t-if="not o.partner_id.is_company">
+                    <t t-if="o.partner_id.parent_id">
+                        <div t-field="o.partner_id.parent_id.name"/>
+						<div t-if="o.partner_id.parent_id.first_name" t-field="o.partner_id.parent_id.first_name"/>
+                    </t>
+                    <div>
+                        <span t-if="o.partner_id.gender == 'm'">Herrn</span>
+                        <span t-if="o.partner_id.gender == 'w'">Frau</span>
+                        <span t-if="o.partner_id.title.shortcut" t-field="o.partner_id.title.shortcut"/>
+                        <span t-field="o.partner_id.first_name"/>
+                        <span t-field="o.partner_id.name"/>
+                    </div>
+                </t>
+                <!-- If partner is a company print company name first -->
+                <t t-if="o.partner_id.is_company">
+                    <div t-field="o.partner_id.name"/>
+                    <div t-if="o.partner_id.first_name" t-field="o.partner_id.first_name"/>
+                </t>
+                <div t-field="o.partner_id.street"/>
+                <div t-if="o.partner_id.street2" t-field="o.partner_id.street2"/>
+                <div>
+                    <span t-field="o.partner_id.zip"/>
+                    <span t-field="o.partner_id.city"/>
+                </div>
+                <t t-if="o.partner_id.country_id">
+                    <div><t t-if="o.partner_id.country_id.code != 'DE'"><span t-field="o.partner_id.country_id.name"/></t></div>
+                </t>
+            </div>
+
+            <!-- shipping address != partner address -->
+            <div class="textbox-right" id="delivery">
+                <div class="small">
+                    <strong>Lieferadresse:</strong>
+                    <!-- If shipping address is a person print parent id, first and last name -->
+                    <t t-if="not o.partner_shipping_id.is_company">
+                        <div t-if="o.partner_shipping_id.parent_id" t-field="o.partner_shipping_id.parent_id.name"/>
+                        <div>
+                            <span t-if="o.partner_shipping_id.gender == 'm'">Herrn</span>
+                            <span t-if="o.partner_shipping_id.gender == 'w'">Frau</span>
+                            <span t-if="o.partner_shipping_id.title.shortcut" t-field="o.partner_shipping_id.title.shortcut"/>
+                            <span t-field="o.partner_shipping_id.first_name"/>
+                            <span t-field="o.partner_shipping_id.name"/>
+                        </div>
+                    </t>
+                    <!-- If partner is a company print company name first -->
+                    <t t-if="o.partner_shipping_id.is_company">
+                        <div t-field="o.partner_shipping_id.name"/>
+                        <div t-if="o.partner_shipping_id.first_name" t-field="o.partner_shipping_id.first_name"/>
+                    </t>
+                    <div t-field="o.partner_shipping_id.street"/>
+                    <div t-if="o.partner_shipping_id.street2" t-field="o.partner_shipping_id.street2"/>
+                    <div>
+                        <span t-field="o.partner_shipping_id.zip"/>
+                        <span t-field="o.partner_shipping_id.city"/>
+                    </div>
+                    <t t-if="o.partner_shipping_id.country_id">
+                        <div><t t-if="o.partner_shipping_id.country_id.code != 'DE'"><span t-field="o.partner_shipping_id.country_id.name"/></t></div>
+                    </t>
+                </div>
+            </div>
  
           <table
             class="fullwidth"
-            style="clear:both; border-top:0.6cm solid white">
+            style="clear:both; border-top:0.2cm solid white">
             <tr>
               <td class="top">
-                <table t-if="o.partner_id.ref or o.partner_id.phone or o.client_order_ref"
+                <table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.client_order_ref or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
                   class="bg-grey small left hspace-s">
-                  <tr t-if="o.partner_id.ref">
-                    <td><b>Kundennr.</b></td>
-                    <td><span t-field="o.partner_id.ref"/></td>
-                  </tr>
-                  <tr t-if="o.partner_id.phone">
-                    <td><b>Ihre Telefonnummer</b></td>
+				  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
+                    <td><b>Kundennummer:</b></td>
                     <td>
-                      <span t-field="o.partner_id.phone"/>
+                      <t t-if="o.partner_id.is_company"><span t-field="o.partner_id.ref"/></t>
+                      <t t-if="not o.partner_id.is_company"><span t-field="o.partner_id.parent_id.ref"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="not o.partner_id.is_company">
+                    <td><b>Name:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.gender == 'm'"><span>Herr</span></t>
+                      <t t-if="o.partner_id.gender == 'w'"><span>Frau</span></t>
+                      <t t-if="o.partner_id.title.shortcut"><span t-field="o.partner_id.title.shortcut"/></t>
+                      <t t-if="o.partner_id.first_name"><span t-field="o.partner_id.first_name"/></t>
+                      <span t-field="o.partner_id.name"/>
                     </td>
                   </tr>
-                  <tr t-if="o.partner_id.fax">
-                    <td><b>Fax</b></td>
+                  <!--tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
+                    <td><b>Telefonnummer:</b></td>
                     <td>
-                      <span t-field="o.partner_id.fax"/>
-                    </td>
+                      <t t-if="o.partner_id.phone"><span t-esc="o.partner_id.phone" t-field-options='{"widget": "phone", "phone": True, "phone_format": "national"}'/></t>
+                      <t t-if="o.partner_id.phone"><span t-esc="phonenumbers.format_number(phonenumbers.parse(o.partner_id.phone, None), phonenumbers.PhoneNumberFormat.INTERNATIONAL)"/></t>
+                      <t t-if="o.partner_id.phone"><span t-esc="o.partner_id.phone.format()"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone.format(phone=true)"/></t>
+                      <t t-if="o.partner_id.phone"><span t-field="format(o.partner_id.phone, phone=True, phone_format='national')"/></t>
+                      <span t-if="o.partner_id.phone" t-field="format(o.partner_id.phone, phone=True, phone_format='national')"/>
+                      <span t-if="not o.partner_id.phone" t-field="o.partner_id.parent_id.phone"/>
+					</td>
+                  </tr-->
+                  <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
+                    <td><b>Telefonnummer:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="o.partner_id.fax or o.partner_id.parent_id.fax">
+                    <td><b>Fax:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.fax"><span t-field="o.partner_id.fax"/></t>
+                      <t t-if="not o.partner_id.fax"><span t-field="o.partner_id.parent_id.fax"/></t>
+					</td>
+                  </tr>
+                  <tr t-if="o.partner_id.email or o.partner_id.parent_id.email">
+                    <td><b>E-Mail:</b></td>
+                    <td>
+                      <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/></t>
+                      <t t-if="not o.partner_id.email"><span t-field="o.partner_id.parent_id.email"/></t>
+					</td>
                   </tr>
                   <tr t-if="o.client_order_ref or o.client_order_date">
-                    <td><br/><b>Ihre Bestellung</b></td>
+                    <td><br/><b>Ihre Bestellung:</b></td>
                     <td>
-                      <br/><span t-field="o.client_order_ref"/>
-                      <t t-if="o.client_order_date">
-                        vom <span t-field="o.client_order_date"/>
+                      <br/><t t-if="o.client_order_date">
+                        <span t-field="o.client_order_date"/>
+                        <t t-if="o.client_order_ref"> - </t>
                       </t>
+                      <span t-field="o.client_order_ref"/>
                     </td>
                   </tr>
                 </table>
@@ -107,7 +188,7 @@
             </tr>
           </table>
 
-          <div class="textbox-right vspace-m">
+          <div class="textbox-right vspace-xs">
             <div class="title"
               t-if="o.state not in ['draft','sent']">
               AUFTRAGSBESTÄTIGUNG
@@ -265,4 +346,3 @@
     </template>
   </data>
 </openerp>
-
