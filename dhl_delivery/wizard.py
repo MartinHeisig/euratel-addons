@@ -213,7 +213,7 @@ class DHLStockTransferDetails(models.TransientModel):
                     arguments = [
                             '-u', company.oc_user,
                             '-p', company.oc_password,
-                            oc_path,
+                            company.oc_local_dir,
                             company.oc_remote_dir
                             ]
                     command.extend(arguments)
