@@ -152,6 +152,8 @@
                   <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
                     <td><b>Telefonnummer:</b></td>
                     <td>
+                      <!--t t-if="o.partner_id.phone"><span t-esc="'{}'.format(o.partner_id.phone, phone=True, phone_format='international')"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-esc="'{}'.format(o.partner_id.parent_id.phone, phone=True, phone_format='international')"/></t-->
                       <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
                       <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
 					</td>
@@ -207,10 +209,21 @@
                     <b>Angebotsnr.</b>
                   </t>
                 </td>
+                <td>
+                  <t t-if="o.delivery_date">
+                    <t t-if="'-' in o.delivery_date">
+                      <b>Zeitraum</b>
+                    </t>
+                    <t t-if="not '-' in o.delivery_date">
+                      <b>Liefertermin</b>
+                    </t>
+                  </t>
+                </td>
                 <td><b>Datum</b></td>
               </tr>
               <tr>
                 <td><span t-field="o.name"/></td>
+                <td><span t-field="o.delivery_date"/></td>
                 <td>
                   <t t-if="o.date_order">
                     <span t-esc="datetime.datetime.strptime(o.date_order, '%Y-%m-%d %H:%M:%S').strftime('%d.%m.%Y')"/>
@@ -240,11 +253,11 @@
                   <!-- Details -->
                   <table style="width:100%">
                     <tr t-if="l.product_id.default_code">
-                      <td><b>Artikelnr.</b></td>
+                      <td class="details_category"><b>Artikelnr.</b></td>
                       <td><span t-field="l.product_id.default_code"/></td>
                     </tr>
                     <tr>
-                      <td><b>Beschreibung</b></td>
+                      <td class="details_category"><b>Beschreibung</b></td>
                       <td>
                         <t t-if="'] ' in l.name">
                           <span t-esc="(l.name).split('] ')[1]"/>
@@ -256,13 +269,24 @@
                     </tr>
                     <!-- Add format here -->
                     <tr t-if="l.product_packaging">
-                      <td><b>Verpackungsart</b></td>
+                      <td class="details_category"><b>Verpackungsart</b></td>
                       <td><span t-field="l.product_packaging.name"/></td>
                     </tr>
-                    <tr t-if="o.delivery_date">
-                      <td><b>Liefertermin</b></td>
+                    <!--tr t-if="o.delivery_date">
+                      <td class="details_category">
+                        <t t-if="'-' in o.delivery_date">
+                          <b>Zeitraum</b>
+                        </t>
+                        <t t-if="not '-' in o.delivery_date">
+                          <b>Liefertermin</b>
+                        </t>
+                      </td>
                       <td><span t-field="o.delivery_date"/></td>
-                    </tr>
+                    </tr-->
+                    <!--tr t-if="o.invoice_type_id">
+                      <td class="details_category">Rechnungstyp</td>
+                      <td><span t-field="o.invoice_type_id.name"/></td>
+                    </tr-->
                     <!--tr t-if="l.product_id.image">
                       <td> </td>
                       <td>

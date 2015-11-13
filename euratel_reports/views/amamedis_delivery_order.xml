@@ -102,7 +102,7 @@
                 <th>POS</th>
                 <th>Artikel</th>
                 <th class="right">Menge</th>
-                <th class="right">Einheit</th>
+                <th class="right">&amp;nbsp;Einheit</th>
               </tr>
             </thead>
             <tbody class="sale_tbody top">
@@ -152,7 +152,9 @@
             </tr>
             <tr t-if="o.weight">
               <td class="bold-35">Gewicht</td>
-              <td><span t-field="o.weight"/></td>
+              <td>
+                <span t-field="o.weight"/>&amp;nbsp;<span t-field="o.weight_uom_id"/>
+              </td>
             </tr>
             <!--tr t-if="o.number_of_packages">
               <td class="bold-35">Anzahl der Pakete</td>

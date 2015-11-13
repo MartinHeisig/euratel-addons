@@ -90,7 +90,8 @@
             <div class="title" t-if="o.type == 'in_invoice'">LIEFERANTENRECHNUNG</div>
             <table t-if="o.number">
               <tr>
-                <td style="padding-right: 0.5cm">
+                <td>
+                <!--td style="padding-right: 0.5cm"-->
                   <t t-if="o.type not in ['in_refund','in_invoice','out_refund']">
                     <b>Rechnungsnr.</b>
                   </t>
@@ -101,10 +102,16 @@
                     <b>Zahlungsnr.</b>
                   </t>
                 </td>
+                <td></td>
                 <td t-if="o.date_invoice"><b>Datum</b></td>
               </tr>
               <tr>
                 <td><span t-field="o.number"/></td>
+                <td>
+                  <t t-if="o.period_id">
+                    <span t-field="o.period_id.code"/>
+                  </t>
+                </td>
                 <td t-if="o.date_invoice">
                   <span t-esc="datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d').strftime('%d.%m.%Y')"/>
                 </td>
@@ -135,6 +142,12 @@
                   <span t-field="o.origin"/> 
                 </td>
               </tr>
+              <!--tr t-if="o.period_id">
+                <td colspan="6" style="padding:0.2cm;">
+                    <b>Leistungszeitraum: </b>
+                    <span t-field="o.period_id.date_start"/> - <span t-field="o.period_id.date_stop"/>
+                </td>
+              </tr-->
               <tr t-foreach="o.invoice_line" t-as="l">
                 <td>
                   <b><span t-esc="l_index + 1"/></b>
@@ -157,6 +170,14 @@
                         </t>
                       </td>
                     </tr>
+                    <!--tr t-if="l.product_id.type == 'service' and o.period_id">
+                      <td class="details_category">Leistungszeitraum</td>
+                      <td><span t-field="o.period_id.date_start"/> - <span t-field="o.period_id.date_stop"/></td>
+                    </tr-->
+                    <!--tr t-if="o.sale_journal.invoice.type">
+                      <td class="details_category">Rechnungstyp</td>
+                      <td><span t-field="o.sale_journal.invoice.type.name"/></td>
+                    </tr-->
                   </table>
                 </td>
                 <td class="right">
