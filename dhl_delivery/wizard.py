@@ -17,11 +17,11 @@ from constants import *
 
 class DHLStockTransferDetails(models.TransientModel):
     _inherit = 'stock.transfer_details'
-    
+
     # Fields
     create_dhl_delivery = fields.Boolean('DHL Paketversand', help="Dieses Kästchen "
         "aktivieren, wenn die Lieferung per DHL Paketversand vorgenommen wird.")
- 
+
     '''
     Helper function that converts a dictionary of the shipment arguments to a string
     of arguments using only the keys that have a value assigned to it.
@@ -45,7 +45,7 @@ class DHLStockTransferDetails(models.TransientModel):
         return out_dict
     # End should be removed
 
-    
+
     '''
     Override method for sending a delivery to enable creating dhl deliveries
     '''
@@ -131,7 +131,7 @@ class DHLStockTransferDetails(models.TransientModel):
                     stderr=PIPE, cwd="/opt/dhl").communicate()
             # Raise error if we get content in stderr
             if err != '':
-                raise osv.except_osv('DHL Versand - Java', err)             
+                raise osv.except_osv('DHL Versand - Java', err)
             else:
                 # Parse output from Java tool
                 splitted_output = out.split('\n')
@@ -149,7 +149,7 @@ class DHLStockTransferDetails(models.TransientModel):
                             'delivery_order' : self.picking_id.id,
                             'url' : shipment_url,
                             })
-                        # Assign dhl delivery to delivery order    
+                        # Assign dhl delivery to delivery order
                         self.picking_id.dhl_deliveries |= dhl_delivery
                         # Download PDF and merge
                         path = "/opt/dhl/pdf/" + shipment_number + ".pdf"
@@ -162,7 +162,7 @@ class DHLStockTransferDetails(models.TransientModel):
                                 'herunterladen. Ist das Verzeichnis /opt/dhl/pdf'
                                 'fuer den odoo Benutzer schreibbar und ' +
                                 'vorhanden?\nURL: ' + shipment_url)
-                # Check for status message    
+                # Check for status message
                     if '::' in line:
                         splitted_line = line.split("::")
                         status_code = splitted_line[0]
@@ -174,7 +174,7 @@ class DHLStockTransferDetails(models.TransientModel):
                 filename = self.picking_id.name + "-DHL.pdf"
                 filename = filename.replace('/','_')
                 path = "/opt/dhl/pdf/" + filename
-                try: 
+                try:
                     pdf.write(path)
                 except:
                     res = {'warning': {
@@ -189,12 +189,13 @@ class DHLStockTransferDetails(models.TransientModel):
                 else:
                     oc_path = company.oc_local_dir
                 # Get name of the year and supplier name
-                year = datetime.datetime.now().strftime('%Y')
-                supplier = sender.name.replace(' ','_').replace('/','_')
-                oc_path += year + '/' + supplier + '/DHL_Sendescheine/unversendet/'
+                # year = datetime.datetime.now().strftime('%Y')
+                # supplier = sender.name.replace(' ','_').replace('/','_')
+                # oc_path += year + '/' + supplier + '/DHL_Sendescheine/unversendet/'
                 # Make directory if not existing
                 try:
-                    os.makedirs(oc_path) 
+                    # os.makedirs(oc_path)
+                    os.makedirs(company.oc_local_dir)
                 except OSError as exception:
                     if exception.errno != errno.EEXIST:
                         msg = 'Konnte Verzeichnis nicht erstellen \'' + oc_path
@@ -204,9 +205,10 @@ class DHLStockTransferDetails(models.TransientModel):
                                           }
                               }
                         return res
-                if os.path.isdir(oc_path): 
+                # if os.path.isdir(oc_path):
+                if os.path.isdir(company.oc_local_dir):
                     # Copy pdf to owncloud directory
-                    shutil.copy(path, oc_path)
+                    shutil.copy(path, company.oc_local_dir)
                     # Sync owncloud
                     command = ['owncloudcmd']
                     # Arguments
@@ -234,13 +236,12 @@ class DHLStockTransferDetails(models.TransientModel):
                   #'datas' : data,
                   })
                 '''
-           
+
         # Call super method
         super(DHLStockTransferDetails, self).do_detailed_transfer()
         return True
-        
+
 class DHLStockTransferDetailsItems(models.TransientModel):
     _inherit = 'stock.transfer_details_items'
 
     packaging_id = fields.Many2one('product.packaging', 'Verpackung')
-
