@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# meine Änderungen
 
 from openerp import models, fields, api
 from openerp.osv import osv
@@ -31,8 +32,10 @@ class DHLStockTransferDetails(models.TransientModel):
         res = []
         for key, value in vals.iteritems():
           if value:
-            argument = [key + '=' + value]
+            # argument = [key + '=' + value.strip()]
+            argument = [key + '=' + value.encode('utf-8').strip()]
             res.extend(argument)
+        # raise osv.except_osv(type(res), res)
         return res
 
     def _parseJavaOutput(self, out):
@@ -64,8 +67,9 @@ class DHLStockTransferDetails(models.TransientModel):
                     pcs_per_box = float(item.product_id.pcs_per_box) / item.product_id.uom_id.factor
                     parcels += int(ceil(quantity / pcs_per_box))
                 else:
-                     raise osv.except_osv(('Fehler'), ('Fuer das Produkt \"' +
-                         item.product_id.name.encode('utf-8') + '\" ist keine Gebindegröße hinterlegt.'))
+                    if item.product_id.name:
+                        raise osv.except_osv(('Fehler'), ('Fuer das Produkt \"' +
+                            item.product_id.name.encode('utf-8') + '\" ist keine Gebindegröße hinterlegt.'))
             # Error handling
             if parcels == 0:
                 raise osv.except_osv(('Fehler'), ('Die Anzahl der berechneten '
@@ -84,35 +88,79 @@ class DHLStockTransferDetails(models.TransientModel):
 
             # Prepare call of Java tool
             # Divide street and street number for sender and reciever
-            street_as_list = sender.street.split(' ')
-            sh_street = ' '.join(street_as_list[:-1]).strip()
-            sh_street_nr = street_as_list[-1].strip()
-            street_as_list = self.picking_id.partner_id.street.split(' ')
-            rc_street = ' '.join(street_as_list[:-1]).strip()
-            rc_street_nr = street_as_list[-1].strip()
+            if sender.street_name and sender.street_number:
+                sh_street = sender.street_name.strip()
+                # sh_street = sender.street_name.encode('utf-8').strip()
+                # sh_street = 'rümpölsträße'.encode('utf-8')
+                sh_street_nr = sender.street_number.strip()
+            else:
+                street_as_list = sender.street.split(' ')
+                sh_street = ' '.join(street_as_list[:-1]).strip()
+                sh_street_nr = street_as_list[-1].strip()
+            if self.picking_id.partner_id.street_name and self.picking_id.partner_id.street_number:
+                rc_street = self.picking_id.partner_id.street_name.strip()
+                # rc_street = unicode(self.picking_id.partner_id.street_name).encode('utf-8').strip()
+                # rc_street = 'teststraße'.decode('utf-8')
+                rc_street_nr = self.picking_id.partner_id.street_number.strip()
+            else:
+                street_as_list = self.picking_id.partner_id.street.split(' ')
+                rc_street = ' '.join(street_as_list[:-1]).strip()
+                rc_street_nr = street_as_list[-1].strip()
             company = self.picking_id.company_id
-            # raise osv.except_osv('Mein Fehlertest', parcels)
+            # raise osv.except_osv(type(sh_street), sh_street)
+            
+            # minimal first check for usage of DHL field lengths
+            if len(self.picking_id.partner_id.name) > 30:
+                raise osv.except_osv(('Fehler'), ('Feld Name beim Empfänger übersteigt die maximale Länge von 30 Zeichen'))
+            if len(self.picking_id.partner_id.first_name) > 30:
+                raise osv.except_osv(('Fehler'), ('Feld Vorname/Firmenzusatz beim Empfänger übersteigt die maximale Länge von 30 Zeichen'))
+            if len(rc_street) > 40:
+                raise osv.except_osv(('Fehler'), ('Feld Strasse beim Empfänger übersteigt die maximale Länge von 40 Zeichen'))
+            if len(rc_street_nr) > 7:
+                # need to test with 10
+                raise osv.except_osv(('Fehler'), ('Feld Hausnummer beim Empfänger übersteigt die maximale Länge von 7 Zeichen'))
+            if len(self.picking_id.partner_id.zip) > 5:
+                # need to be raised to 10 for intenational shipment
+                raise osv.except_osv(('Fehler'), ('Feld PLZ beim Empfänger übersteigt die maximale Länge von 5 Zeichen (da Deutschland voreingestellt)'))
+            if len(self.picking_id.partner_id.city) > 50:
+                # maybe only 20 based on use of district?
+                raise osv.except_osv(('Fehler'), ('Feld Stadt beim Empfänger übersteigt die maximale Länge von 50 Zeichen'))
+                
+            if len(sender.name) > 30:
+                raise osv.except_osv(('Fehler'), ('Feld Name beim Sender übersteigt die maximale Länge von 30 Zeichen'))
+            if len(sh_street) > 40:
+                raise osv.except_osv(('Fehler'), ('Feld Strasse beim Sender übersteigt die maximale Länge von 40 Zeichen'))
+            if len(sh_street_nr) > 7:
+                # need to test with 10
+                raise osv.except_osv(('Fehler'), ('Feld Hausnummer beim Sender übersteigt die maximale Länge von 7 Zeichen'))
+            if len(sender.zip) > 5:
+                # need to be raised to 10 for intenational shipment
+                raise osv.except_osv(('Fehler'), ('Feld PLZ beim Sender übersteigt die maximale Länge von 5 Zeichen (da Deutschland voreingestellt)'))
+            if len(sender.city) > 50:
+                # maybe only 20 based on use of district?
+                raise osv.except_osv(('Fehler'), ('Feld Stadt beim Sender übersteigt die maximale Länge von 50 Zeichen'))
+            
             # Set arguments
             vals = {
                     # Reciever details
-                    RC_CONTACT_EMAIL : self.picking_id.partner_id.email.encode('utf-8'),
-                    RC_CONTACT_PHONE : self.picking_id.partner_id.phone.encode('utf-8'),
-                    RC_COMPANY_NAME : self.picking_id.partner_id.name.encode('utf-8'),
-                    RC_COMPANY_NAME_2 : self.picking_id.partner_id.first_name.encode('utf-8'),
-                    RC_LOCAL_CITY : self.picking_id.partner_id.city.encode('utf-8'),
-                    RC_LOCAL_STREET : rc_street.encode('utf-8'),
-                    RC_LOCAL_STREETNR : rc_street_nr.encode('utf-8'),
-                    RC_LOCAL_ZIP : self.picking_id.partner_id.zip.encode('utf-8'),
+                    RC_CONTACT_EMAIL : self.picking_id.partner_id.email,
+                    RC_CONTACT_PHONE : self.picking_id.partner_id.phone,
+                    RC_COMPANY_NAME : self.picking_id.partner_id.name,
+                    RC_COMPANY_NAME_2 : self.picking_id.partner_id.first_name,
+                    RC_LOCAL_CITY : self.picking_id.partner_id.city,
+                    RC_LOCAL_STREET : rc_street,
+                    RC_LOCAL_STREETNR : rc_street_nr,
+                    RC_LOCAL_ZIP : self.picking_id.partner_id.zip,
                     NUMBER_OF_SHIPMENTS : str(parcels),
-                    CUSTOMER_REFERENCE : self.picking_id.name.encode('utf-8'),
+                    CUSTOMER_REFERENCE : self.picking_id.name,
                     # Sender details
-                    SH_COMPANY_NAME : sender.name.encode('utf-8'),
-                    SH_STREET : sh_street.encode('utf-8'),
-                    SH_STREET_NR : sh_street_nr.encode('utf-8'),
-                    SH_CITY : sender.city.encode('utf-8'),
-                    SH_ZIP : sender.zip.encode('utf-8'),
-                    SH_CONTACT_EMAIL : sender.email.encode('utf-8'),
-                    SH_CONTACT_PHONE : sender.phone.encode('utf-8'),
+                    SH_COMPANY_NAME : sender.name,
+                    SH_STREET : sh_street,
+                    SH_STREET_NR : sh_street_nr,
+                    SH_CITY : sender.city,
+                    SH_ZIP : sender.zip,
+                    SH_CONTACT_EMAIL : sender.email,
+                    SH_CONTACT_PHONE : sender.phone,
                     # Options and Credentials
                     METHOD : 'createShipment',
                     TEST : company.dhl_test and 'True' or False,
@@ -123,10 +171,12 @@ class DHLStockTransferDetails(models.TransientModel):
                     }
             arguments = self._assamble_shipment_arguments(vals)
             print arguments
+            # raise osv.except_osv(('Argumente'), (type(arguments)))
             # Call Java program
             program_name = "./dhl.jar"
             command = ["java", "-jar", "./dhl.jar"]
             command.extend(arguments)
+            # raise osv.except_osv(('command'), (command))
             out, err = Popen(command, stdin=PIPE, stdout=PIPE,
                     stderr=PIPE, cwd="/opt/dhl").communicate()
             # Raise error if we get content in stderr
