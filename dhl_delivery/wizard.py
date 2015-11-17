@@ -32,10 +32,8 @@ class DHLStockTransferDetails(models.TransientModel):
         res = []
         for key, value in vals.iteritems():
           if value:
-            # argument = [key + '=' + value.strip()]
             argument = [key + '=' + value.encode('utf-8').strip()]
             res.extend(argument)
-        # raise osv.except_osv(type(res), res)
         return res
 
     def _parseJavaOutput(self, out):
@@ -88,26 +86,24 @@ class DHLStockTransferDetails(models.TransientModel):
 
             # Prepare call of Java tool
             # Divide street and street number for sender and reciever
-            if sender.street_name and sender.street_number:
-                sh_street = sender.street_name.strip()
-                # sh_street = sender.street_name.encode('utf-8').strip()
-                # sh_street = 'rümpölsträße'.encode('utf-8')
-                sh_street_nr = sender.street_number.strip()
-            else:
-                street_as_list = sender.street.split(' ')
-                sh_street = ' '.join(street_as_list[:-1]).strip()
-                sh_street_nr = street_as_list[-1].strip()
-            if self.picking_id.partner_id.street_name and self.picking_id.partner_id.street_number:
-                rc_street = self.picking_id.partner_id.street_name.strip()
-                # rc_street = unicode(self.picking_id.partner_id.street_name).encode('utf-8').strip()
-                # rc_street = 'teststraße'.decode('utf-8')
-                rc_street_nr = self.picking_id.partner_id.street_number.strip()
-            else:
-                street_as_list = self.picking_id.partner_id.street.split(' ')
-                rc_street = ' '.join(street_as_list[:-1]).strip()
-                rc_street_nr = street_as_list[-1].strip()
+            try:
+                if sender.street_name and sender.street_number:
+                    sh_street = sender.street_name.strip()
+                    sh_street_nr = sender.street_number.strip()
+                else:
+                    street_as_list = sender.street.split(' ')
+                    sh_street = ' '.join(street_as_list[:-1]).strip()
+                    sh_street_nr = street_as_list[-1].strip()
+                if self.picking_id.partner_id.street_name and self.picking_id.partner_id.street_number:
+                    rc_street = self.picking_id.partner_id.street_name.strip()
+                    rc_street_nr = self.picking_id.partner_id.street_number.strip()
+                else:
+                    street_as_list = self.picking_id.partner_id.street.split(' ')
+                    rc_street = ' '.join(street_as_list[:-1]).strip()
+                    rc_street_nr = street_as_list[-1].strip()
+            except:
+                raise osv.except_osv(('Fehler'), ('Beim Auslesen und gegebenenfalls aufsplitten trat ein Fehler auf. Möglicher Grund wäre, das das Modul "partner_street_number", welches die Adresszeiel in Straße und Hausnumemr aufsplittet nicht installiert ist.'))
             company = self.picking_id.company_id
-            # raise osv.except_osv(type(sh_street), sh_street)
             
             # minimal first check for usage of DHL field lengths
             if len(self.picking_id.partner_id.name) > 30:
@@ -171,12 +167,10 @@ class DHLStockTransferDetails(models.TransientModel):
                     }
             arguments = self._assamble_shipment_arguments(vals)
             print arguments
-            # raise osv.except_osv(('Argumente'), (type(arguments)))
             # Call Java program
             program_name = "./dhl.jar"
             command = ["java", "-jar", "./dhl.jar"]
             command.extend(arguments)
-            # raise osv.except_osv(('command'), (command))
             out, err = Popen(command, stdin=PIPE, stdout=PIPE,
                     stderr=PIPE, cwd="/opt/dhl").communicate()
             # Raise error if we get content in stderr
