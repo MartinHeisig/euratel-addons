@@ -102,7 +102,7 @@ class DHLStockTransferDetails(models.TransientModel):
                     rc_street = ' '.join(street_as_list[:-1]).strip()
                     rc_street_nr = street_as_list[-1].strip()
             except:
-                raise osv.except_osv(('Fehler'), ('Beim Auslesen und gegebenenfalls aufsplitten trat ein Fehler auf. Möglicher Grund wäre, das das Modul "partner_street_number", welches die Adresszeiel in Straße und Hausnumemr aufsplittet nicht installiert ist.'))
+                raise osv.except_osv(('Fehler'), ('Beim Auslesen und gegebenenfalls Aufsplitten trat ein Fehler auf. Möglicher Grund könnte sein, dass das Modul "partner_street_number", welches die Adresszeile in Straße und Hausnummer aufsplittet nicht installiert ist.'))
             company = self.picking_id.company_id
             
             # minimal first check for usage of DHL field lengths

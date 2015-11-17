@@ -21,7 +21,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['delivery'],
+    'depends': ['delivery', 'partner_street_number'],
 
     # always loaded
     'data': [
