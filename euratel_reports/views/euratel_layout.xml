@@ -40,10 +40,22 @@
         <!-- create info template for company infos -->
         <template id="report.external_report_sender">
             <!-- Multicompany -->
-            <t t-set="section" t-value="o.partner_id.section_id"/>
-            <t t-if="not o.partner_id.is_company">
-                <t t-if="o.partner_id.parent_id">
-                    <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+            <t t-if="doc_model == 'stock.picking'">
+                <t t-if="o.move_lines and o.move_lines[0].partner_id">
+                    <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
+                    <t t-if="not o.move_lines[0].partner_id.is_company">
+                        <t t-if="o.move_lines[0].partner_id.parent_id">
+                            <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+                        </t>
+                    </t>
+                </t>
+            </t>
+            <t t-if="not (doc_model == 'stock.picking')">
+                <t t-set="section" t-value="o.partner_id.section_id"/>
+                <t t-if="not o.partner_id.is_company">
+                    <t t-if="o.partner_id.parent_id">
+                        <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                    </t>
                 </t>
             </t>
             <div class="x-small clearleft left" style="margin-top: 0.5cm" id="from">
@@ -55,10 +67,22 @@
         <template id="external_layout_footer" inherit_id="report.external_layout_footer">
             <xpath expr="//div[@class='footer']" position="replace">
                 <!-- Multicompany -->
-                <t t-set="section" t-value="o.partner_id.section_id"/>
-                <t t-if="not o.partner_id.is_company">
-                    <t t-if="o.partner_id.parent_id">
-                        <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                <t t-if="doc_model == 'stock.picking'">
+                    <t t-if="o.move_lines and o.move_lines[0].partner_id">
+                        <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
+                        <t t-if="not o.move_lines[0].partner_id.is_company">
+                            <t t-if="o.move_lines[0].partner_id.parent_id">
+                                <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+                            </t>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not (doc_model == 'stock.picking')">
+                    <t t-set="section" t-value="o.partner_id.section_id"/>
+                    <t t-if="not o.partner_id.is_company">
+                        <t t-if="o.partner_id.parent_id">
+                            <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                        </t>
                     </t>
                 </t>
                 <div t-if="section" class="footer small">
@@ -74,10 +98,22 @@
         <template id="report.external_layout_header">
             <div class="header" style="text-align:right; padding-top: 0.1cm">
                 <!-- Multicompany -->
-                <t t-set="section" t-value="o.partner_id.section_id"/>
-                <t t-if="not o.partner_id.is_company">
-                    <t t-if="o.partner_id.parent_id">
-                        <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                <t t-if="doc_model == 'stock.picking'">
+                    <t t-if="o.move_lines and o.move_lines[0].partner_id">
+                        <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
+                        <t t-if="not o.move_lines[0].partner_id.is_company">
+                            <t t-if="o.move_lines[0].partner_id.parent_id">
+                                <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+                            </t>
+                        </t>
+                    </t>
+                </t>
+                <t t-if="not (doc_model == 'stock.picking')">
+                    <t t-set="section" t-value="o.partner_id.section_id"/>
+                    <t t-if="not o.partner_id.is_company">
+                        <t t-if="o.partner_id.parent_id">
+                            <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                        </t>
                     </t>
                 </t>
                 <img t-if="section.image" 

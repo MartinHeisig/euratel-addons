@@ -7,16 +7,60 @@
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->
-          <t t-set="section" t-value="o.partner_id.section_id"/>
+          <t t-if="o.move_lines and o.move_lines[0].partner_id">
+            <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
+            <t t-if="not o.move_lines[0].partner_id.is_company">
+              <t t-if="o.move_lines[0].partner_id.parent_id">
+                <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+              </t>
+            </t>
+          </t>
+          
+          <!--t t-set="section" t-value="o.partner_id.section_id"/>
           <t t-if="not o.partner_id.is_company">
               <t t-if="o.partner_id.parent_id">
                   <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
               </t>
-          </t>
+          </t-->
 
           <t t-call="report.external_report_sender"/>
           <div>&amp;nbsp;</div>
-          <t t-call="report.external_report_to"/>
+          <!--t t-call="report.external_report_to"/-->
+          
+          <div class="vspace-xs clearleft left small" id="addressee">
+                <div class="x-small" t-if="not o.move_lines[0].partner_id.country_id or not o.move_lines[0].partner_id.street2">&#160;</div>
+                <!-- If Partner is a person print parent id, first and last name -->
+                <t t-if="not o.move_lines[0].partner_id.is_company">
+                    <t t-if="o.move_lines[0].partner_id.parent_id">
+                        <div t-field="o.move_lines[0].partner_id.parent_id.name"/>
+						<div t-if="o.move_lines[0].partner_id.parent_id.first_name" t-field="o.move_lines[0].partner_id.parent_id.first_name"/>
+                    </t>
+                    <div>
+                        <span t-if="o.move_lines[0].partner_id.gender == 'm'">Herrn</span>
+                        <span t-if="o.move_lines[0].partner_id.gender == 'w'">Frau</span>
+                        <span t-if="o.move_lines[0].partner_id.title.shortcut" t-field="o.move_lines[0].partner_id.title.shortcut"/>
+                        <span t-field="o.move_lines[0].partner_id.first_name"/>
+                        <span t-field="o.move_lines[0].partner_id.name"/>
+                    </div>
+                </t>
+                <!-- If partner is a company print company name first -->
+                <t t-if="o.move_lines[0].partner_id.is_company">
+                    <div t-field="o.move_lines[0].partner_id.name"/>
+                    <div t-if="o.move_lines[0].partner_id.first_name" t-field="o.move_lines[0].partner_id.first_name"/>
+                </t>
+                <div t-field="o.move_lines[0].partner_id.street"/>
+                <div t-if="o.move_lines[0].partner_id.street2" t-field="o.move_lines[0].partner_id.street2"/>
+                <div>
+                    <span t-field="o.move_lines[0].partner_id.zip"/>
+                    <span t-field="o.move_lines[0].partner_id.city"/>
+                </div>
+                <t t-if="o.move_lines[0].partner_id.country_id">
+                    <div><t t-if="o.move_lines[0].partner_id.country_id.code != 'DE'"><span t-field="o.move_lines[0].partner_id.country_id.name"/></t></div>
+                </t>
+          </div>
+          
+          
+          
 
           <!-- Info box -->
           <table
@@ -24,53 +68,49 @@
             style="clear:both; border-top:0.2cm solid white">
             <tr>
               <td class="top">
-                <!--table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
-                  class="bg-grey small left hspace-s">
-				  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
-                    <td><b>Kundennummer:</b></td>
-                    <td>
-                      <t t-if="o.partner_id.is_company"><span t-field="o.partner_id.ref"/></t>
-                      <t t-if="not o.partner_id.is_company"><span t-field="o.partner_id.parent_id.ref"/></t>
-					</td>
-                  </tr>
-                  <tr t-if="not o.partner_id.is_company">
-                    <td><b>Name:</b></td>
-                    <td>
-                      <t t-if="o.partner_id.gender == 'm'"><span>Herr</span></t>
-                      <t t-if="o.partner_id.gender == 'w'"><span>Frau</span></t>
-                      <t t-if="o.partner_id.title.shortcut"><span t-field="o.partner_id.title.shortcut"/></t>
-                      <t t-if="o.partner_id.first_name"><span t-field="o.partner_id.first_name"/></t>
-                      <span t-field="o.partner_id.name"/>
-                    </td>
-                  </tr>
-                  <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
-                    <td><b>Telefonnummer:</b></td>
-                    <td>
-                      <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
-                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
-					</td>
-                  </tr>
-                  <tr t-if="o.partner_id.fax or o.partner_id.parent_id.fax">
-                    <td><b>Fax:</b></td>
-                    <td>
-                      <t t-if="o.partner_id.fax"><span t-field="o.partner_id.fax"/></t>
-                      <t t-if="not o.partner_id.fax"><span t-field="o.partner_id.parent_id.fax"/></t>
-					</td>
-                  </tr>
-                  <tr t-if="o.partner_id.email or o.partner_id.parent_id.email">
-                    <td><b>E-Mail:</b></td>
-                    <td>
-                      <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/></t>
-                      <t t-if="not o.partner_id.email"><span t-field="o.partner_id.parent_id.email"/></t>
-					</td>
-                  </tr>
-                  <tr t-if="o.name">
-                    <td><br/><b>Ihre Bestellung:</b></td>
-                    <td>
-                      <br/><span t-field="o.name"/>
-                    </td>
-                  </tr>
-                </table-->
+                <!--t t-if="o.move_lines and o.move_lines[0].partner_id and o.partner_id.id == o.move_lines[0].partner_id.id">
+                  <table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
+                    class="bg-grey small left hspace-s">
+                    <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
+                      <td><b>Kundennummer:</b></td>
+                      <td>
+                        <t t-if="o.partner_id.is_company"><span t-field="o.partner_id.ref"/></t>
+                        <t t-if="not o.partner_id.is_company"><span t-field="o.partner_id.parent_id.ref"/></t>
+                      </td>
+                    </tr>
+                    <tr t-if="not o.partner_id.is_company">
+                      <td><b>Name:</b></td>
+                      <td>
+                        <t t-if="o.partner_id.gender == 'm'"><span>Herr</span></t>
+                        <t t-if="o.partner_id.gender == 'w'"><span>Frau</span></t>
+                        <t t-if="o.partner_id.title.shortcut"><span t-field="o.partner_id.title.shortcut"/></t>
+                        <t t-if="o.partner_id.first_name"><span t-field="o.partner_id.first_name"/></t>
+                        <span t-field="o.partner_id.name"/>
+                      </td>
+                    </tr>
+                    <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
+                      <td><b>Telefonnummer:</b></td>
+                      <td>
+                        <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
+                        <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
+                      </td>
+                    </tr>
+                    <tr t-if="o.partner_id.fax or o.partner_id.parent_id.fax">
+                      <td><b>Fax:</b></td>
+                      <td>
+                        <t t-if="o.partner_id.fax"><span t-field="o.partner_id.fax"/></t>
+                        <t t-if="not o.partner_id.fax"><span t-field="o.partner_id.parent_id.fax"/></t>
+                      </td>
+                    </tr>
+                    <tr t-if="o.partner_id.email or o.partner_id.parent_id.email">
+                      <td><b>E-Mail:</b></td>
+                      <td>
+                        <t t-if="o.partner_id.email"><span t-field="o.partner_id.email"/></t>
+                        <t t-if="not o.partner_id.email"><span t-field="o.partner_id.parent_id.email"/></t>
+                      </td>
+                    </tr>
+                  </table>
+                </t-->
               </td>
               <td t-if="section" style="vertical-align:top; padding-right:0cm">
                 <div class="textbox-right" t-raw="section.contact"/>
