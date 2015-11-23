@@ -31,7 +31,7 @@ class DHLStockTransferDetails(models.TransientModel):
     def _assamble_shipment_arguments(self, vals):
         res = []
         for key, value in vals.iteritems():
-          if value:
+          if value and value.strip() != '':
             argument = [key + '=' + value.encode('utf-8').strip()]
             res.extend(argument)
         return res
@@ -106,33 +106,33 @@ class DHLStockTransferDetails(models.TransientModel):
             company = self.picking_id.company_id
             
             # minimal first check for usage of DHL field lengths
-            if len(self.picking_id.partner_id.name) > 30:
+            if self.picking_id.partner_id.name and len(self.picking_id.partner_id.name) > 30:
                 raise osv.except_osv(('Fehler'), ('Feld Name beim Empfänger übersteigt die maximale Länge von 30 Zeichen'))
-            if len(self.picking_id.partner_id.first_name) > 30:
+            if self.picking_id.partner_id.first_name and len(self.picking_id.partner_id.first_name) > 30:
                 raise osv.except_osv(('Fehler'), ('Feld Vorname/Firmenzusatz beim Empfänger übersteigt die maximale Länge von 30 Zeichen'))
-            if len(rc_street) > 40:
+            if rc_street and len(rc_street) > 40:
                 raise osv.except_osv(('Fehler'), ('Feld Strasse beim Empfänger übersteigt die maximale Länge von 40 Zeichen'))
-            if len(rc_street_nr) > 7:
+            if rc_street_nr and len(rc_street_nr) > 7:
                 # need to test with 10
                 raise osv.except_osv(('Fehler'), ('Feld Hausnummer beim Empfänger übersteigt die maximale Länge von 7 Zeichen'))
-            if len(self.picking_id.partner_id.zip) > 5:
+            if self.picking_id.partner_id.zip and len(self.picking_id.partner_id.zip) > 5:
                 # need to be raised to 10 for intenational shipment
                 raise osv.except_osv(('Fehler'), ('Feld PLZ beim Empfänger übersteigt die maximale Länge von 5 Zeichen (da Deutschland voreingestellt)'))
-            if len(self.picking_id.partner_id.city) > 50:
+            if self.picking_id.partner_id.city and len(self.picking_id.partner_id.city) > 50:
                 # maybe only 20 based on use of district?
                 raise osv.except_osv(('Fehler'), ('Feld Stadt beim Empfänger übersteigt die maximale Länge von 50 Zeichen'))
                 
-            if len(sender.name) > 30:
+            if sender.name and len(sender.name) > 30:
                 raise osv.except_osv(('Fehler'), ('Feld Name beim Sender übersteigt die maximale Länge von 30 Zeichen'))
-            if len(sh_street) > 40:
+            if sh_street and len(sh_street) > 40:
                 raise osv.except_osv(('Fehler'), ('Feld Strasse beim Sender übersteigt die maximale Länge von 40 Zeichen'))
-            if len(sh_street_nr) > 7:
+            if sh_street_nr and len(sh_street_nr) > 7:
                 # need to test with 10
                 raise osv.except_osv(('Fehler'), ('Feld Hausnummer beim Sender übersteigt die maximale Länge von 7 Zeichen'))
-            if len(sender.zip) > 5:
+            if sender.zip and len(sender.zip) > 5:
                 # need to be raised to 10 for intenational shipment
                 raise osv.except_osv(('Fehler'), ('Feld PLZ beim Sender übersteigt die maximale Länge von 5 Zeichen (da Deutschland voreingestellt)'))
-            if len(sender.city) > 50:
+            if sender.city and len(sender.city) > 50:
                 # maybe only 20 based on use of district?
                 raise osv.except_osv(('Fehler'), ('Feld Stadt beim Sender übersteigt die maximale Länge von 50 Zeichen'))
             
