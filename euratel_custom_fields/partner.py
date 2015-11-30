@@ -38,6 +38,7 @@ class euratel_partner(osv.osv):
             'partner_id',
             'branch_id',
             'Filialen'),
+        'oc_folder': fields.char('Owncloud-Verzeichnis'),
     }
 
     ''' Adds city to all displays of partners and gives possibility to show city
@@ -52,8 +53,12 @@ class euratel_partner(osv.osv):
             name = record.name
             if record.parent_id and not record.is_company:
                 name = "%s, %s" % (record.parent_name, name)
-            if record.city:
+            if record.city and record.zip:
+                name += ' (' + record.city + ' ' + record.zip + ')'
+            elif record.city:
                 name += ' (' + record.city + ')'
+            elif record.zip:
+                name += ' (' + record.zip + ')'
             if context.get('show_address_only'):
                 name = self._display_address(cr, uid, record, without_company=True, context=context)
             if context.get('show_address'):

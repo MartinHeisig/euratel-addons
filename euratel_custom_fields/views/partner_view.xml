@@ -8,6 +8,9 @@
       <field name="model">res.partner</field>
       <field name="inherit_id" ref="account.view_partner_property_form"/>
       <field name="arch" type="xml">
+        <field name="ref" position="after">
+          <field name="bga"/>
+        </field>
         <field name="debit" position="after">
           <field name="debit_ref"/>
         </field>
@@ -35,7 +38,7 @@
         <page name="internal_notes" position="after">
           <page string="Weiteres">
             <group>
-              <field name="bga"/>
+              <field name="oc_folder" widget="url"/>
             </group>
           </page>
         </page>
