@@ -14,7 +14,7 @@ Kundenansicht:
 * Änderungen an den Ansichten
         """,
     'author': 'artmin IT-Dienstleistungen',
-    'depends': ['sale'],
+    'depends': ['sale', 'account'],
     'data': [
         'views/partner_view.xml',
         'views/product_view.xml',
