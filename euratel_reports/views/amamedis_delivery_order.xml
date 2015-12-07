@@ -165,15 +165,15 @@
                     <tr>
                       <td class="details_category">Beschreibung</td>
                       <td>
-                        <t t-if="'] ' in l.product_id.display_name">
-                          <span t-esc="(l.product_id.display_name).split('] ')[1]"/>
+                        <t t-if="'] ' in l.name">
+                          <span t-esc="(l.name).split('] ')[1]"/>
                         </t>
-                        <t t-if="not '] ' in l.product_id.display_name">
-                          <span t-field="l.product_id.display_name"/>
+                        <t t-if="not '] ' in l.name">
+                          <span t-field="l.name"/>
                         </t>
-                        <t t-if="l.product_id.description_sale">
+                        <!--t t-if="l.product_id.description_sale">
                           <br/><span t-field="l.product_id.description_sale"/>
-                        </t>
+                        </t-->
                       </td>
                     </tr>
                   </table>
