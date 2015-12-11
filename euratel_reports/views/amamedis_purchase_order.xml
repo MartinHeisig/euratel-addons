@@ -15,9 +15,9 @@
             </t>
           </t>
           
-          <t t-call="report.external_report_sender"/>
+          <t t-call="euratel_reports.euratel_external_report_sender"/>
           <div>&amp;nbsp;</div>
-          <!--t t-call="report.external_report_to"/-->
+          <!--t t-call="euratel_reports.euratel_external_report_to"/-->
           
           <div class="vspace-xs clearleft left small" id="addressee">
                 <div class="x-small" t-if="not o.dest_address_id.country_id or not o.dest_address_id.street2">&#160;</div>

@@ -7,7 +7,7 @@
 Reports for Euratel GmbH
         """,
     'author': 'artmin IT-Dienstleistungen',
-    'depends': ['sale', 'base_phone'],
+    'depends': ['sale', 'base_phone', 'report'],
     'data': [
         'views/euratel_layout.xml',
         'views/euratel_invoice.xml',

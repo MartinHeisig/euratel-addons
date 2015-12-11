@@ -15,7 +15,7 @@
                 </t>
             </t>	
 
-            <t t-call="report.external_report_sender"/>
+            <t t-call="euratel_reports.euratel_external_report_sender"/>
           
             <!-- invoice address != partner address -->
             <div class="textbox-right" id="invoice">

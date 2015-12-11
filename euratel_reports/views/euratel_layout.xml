@@ -3,7 +3,7 @@
     <data>
     
         <!-- template for addressee-->
-        <template id="report.external_report_to">
+        <template id="euratel_external_report_to">
            <div class="vspace-xs clearleft left small" id="addressee">
                 <div class="x-small" t-if="not o.partner_id.country_id or not o.partner_id.street2">&#160;</div>
                 <!-- If Partner is a person print parent id, first and last name -->
@@ -38,7 +38,7 @@
         </template>
  
         <!-- create info template for company infos -->
-        <template id="report.external_report_sender">
+        <template id="euratel_external_report_sender">
             <!-- Multicompany -->
             <t t-if="doc_model in ['stock.picking']">
                 <t t-if="o.move_lines and o.move_lines[0].partner_id">
@@ -74,235 +74,243 @@
         </template>
 
         <!-- Override external footer -->
-        <template id="external_layout_footer" inherit_id="report.external_layout_footer">
+        <template id="euratel_external_layout_footer" inherit_id="report.external_layout_footer">
             <xpath expr="//div[@class='footer']" position="replace">
-                <!-- Multicompany -->
-                <t t-if="doc_model in ['stock.picking']">
-                    <t t-if="o.move_lines and o.move_lines[0].partner_id">
-                        <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
-                        <t t-if="not o.move_lines[0].partner_id.is_company">
-                            <t t-if="o.move_lines[0].partner_id.parent_id">
-                                <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+                <div class="footer">
+                    <!-- Multicompany -->
+                    <t t-if="doc_model in ['stock.picking']">
+                        <t t-if="o.move_lines and o.move_lines[0].partner_id">
+                            <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
+                            <t t-if="not o.move_lines[0].partner_id.is_company">
+                                <t t-if="o.move_lines[0].partner_id.parent_id">
+                                    <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+                                </t>
                             </t>
                         </t>
                     </t>
-                </t>
-                <t t-if="doc_model in ['purchase.order']">
-                    <t t-if="o.dest_address_id">
-                        <t t-set="section" t-value="o.dest_address_id.section_id"/>
-                        <t t-if="not o.dest_address_id.is_company">
-                            <t t-if="o.dest_address_id.parent_id">
-                                <t t-set="section" t-value="o.dest_address_id.parent_id.section_id"/>
+                    <t t-if="doc_model in ['purchase.order']">
+                        <t t-if="o.dest_address_id">
+                            <t t-set="section" t-value="o.dest_address_id.section_id"/>
+                            <t t-if="not o.dest_address_id.is_company">
+                                <t t-if="o.dest_address_id.parent_id">
+                                    <t t-set="section" t-value="o.dest_address_id.parent_id.section_id"/>
+                                </t>
                             </t>
                         </t>
                     </t>
-                </t>
-                <t t-if="doc_model not in ['stock.picking','purchase.order']">
-                    <t t-set="section" t-value="o.partner_id.section_id"/>
-                    <t t-if="not o.partner_id.is_company">
-                        <t t-if="o.partner_id.parent_id">
-                            <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                    <t t-if="doc_model not in ['stock.picking','purchase.order']">
+                        <t t-set="section" t-value="o.partner_id.section_id"/>
+                        <t t-if="not o.partner_id.is_company">
+                            <t t-if="o.partner_id.parent_id">
+                                <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                            </t>
                         </t>
                     </t>
-                </t>
-                <div t-if="section" class="footer small">
-                    <!--div class="right">
-                        <span class="page"/> / <span class="topage"/>
-                    </div-->
-                    <div style="width:100%; margin:auto;" t-raw="section.footer"/>
+                    <div t-if="section" class="footer small">
+                        <!--div class="right">
+                            <span class="page"/> / <span class="topage"/>
+                        </div-->
+                        <div style="width:100%; margin:auto;" t-raw="section.footer"/>
+                    </div>
                 </div>
             </xpath>
         </template>
 
         <!-- Override external header, only show logo -->
-        <template id="report.external_layout_header">
-            <div class="header" style="text-align:right; padding-top: 0.1cm">
-                <!-- Multicompany -->
-                <t t-if="doc_model in ['stock.picking']">
-                    <t t-if="o.move_lines and o.move_lines[0].partner_id">
-                        <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
-                        <t t-if="not o.move_lines[0].partner_id.is_company">
-                            <t t-if="o.move_lines[0].partner_id.parent_id">
-                                <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+        <!--template id="report.external_layout_header">
+            <div class="header" style="text-align:right; padding-top: 0.1cm"-->
+        <template id="euratel_external_layout_header" inherit_id="report.external_layout_header">
+            <xpath expr="//div[@class='header']" position="replace">
+                <div class="header" style="text-align:right; padding-top: 0.1cm">
+                    <!-- Multicompany -->
+                    <t t-if="doc_model in ['stock.picking']">
+                        <t t-if="o.move_lines and o.move_lines[0].partner_id">
+                            <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
+                            <t t-if="not o.move_lines[0].partner_id.is_company">
+                                <t t-if="o.move_lines[0].partner_id.parent_id">
+                                    <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+                                </t>
                             </t>
                         </t>
                     </t>
-                </t>
-                <t t-if="doc_model in ['purchase.order']">
-                    <t t-if="o.dest_address_id">
-                        <t t-set="section" t-value="o.dest_address_id.section_id"/>
-                        <t t-if="not o.dest_address_id.is_company">
-                            <t t-if="o.dest_address_id.parent_id">
-                                <t t-set="section" t-value="o.dest_address_id.parent_id.section_id"/>
+                    <t t-if="doc_model in ['purchase.order']">
+                        <t t-if="o.dest_address_id">
+                            <t t-set="section" t-value="o.dest_address_id.section_id"/>
+                            <t t-if="not o.dest_address_id.is_company">
+                                <t t-if="o.dest_address_id.parent_id">
+                                    <t t-set="section" t-value="o.dest_address_id.parent_id.section_id"/>
+                                </t>
                             </t>
                         </t>
                     </t>
-                </t>
-                <t t-if="doc_model not in ['stock.picking','purchase.order']">
-                    <t t-set="section" t-value="o.partner_id.section_id"/>
-                    <t t-if="not o.partner_id.is_company">
-                        <t t-if="o.partner_id.parent_id">
-                            <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                    <t t-if="doc_model not in ['stock.picking','purchase.order']">
+                        <t t-set="section" t-value="o.partner_id.section_id"/>
+                        <t t-if="not o.partner_id.is_company">
+                            <t t-if="o.partner_id.parent_id">
+                                <t t-set="section" t-value="o.partner_id.parent_id.section_id"/>
+                            </t>
                         </t>
                     </t>
-                </t>
-                <img t-if="section.image" 
-                     t-att-src="'data:image/png;base64,%s' % section.image" 
-                     style="max-width:6cm; max-height:3.5cm"/>
-            </div>
+                    <img t-if="section.image" 
+                         t-att-src="'data:image/png;base64,%s' % section.image" 
+                         style="max-width:6cm; max-height:3.5cm"/>
+                </div>
+            </xpath>
         </template>
 
         <!-- Override style sheets -->
-        <template id="report.style">
-            footer {
-                border-top: 1px solid black;
-                text-align:center
-            }
-            body {
-                color: #000 !important;
-                font-family: Arial,sans-serif;
-                font-size:9pt
-            }
-            .border-black td {
-                border-top: 1px solid black !important;
-            }
-            .table-condensed > thead > tr > th {
-                border-bottom: 1px solid black !important;
-            }
-            .zero_min_height {
-                min-height: 0px !important;
-            }
-            /* by IT.artmin */
-            #from {
-                width: 8.5cm;
-            }
-            #delivery {
-                clear:right;
-                width: 7 cm;
-            }
-            #invoice {
-                clear:right;
-                width: 7 cm;
-            }
-            #addressee {
-                max-width: 8.5cm;
-            }
-            th, td {
-                padding-right: 0.2cm;
-                font-size: 8pt;
-                padding-bottom: 0.05cm;
-                padding-top: 0.05cm;
-            }
-            .right {
-                float: right;
-                padding-right: 0cm;
-                padding-bottom: 0cm;
-            }
-            .center {
-                text-align: center;
-            }
-            .left {
-                float: left
-            }
-            .clearleft {
-                clear : left;
-            }
-            .clearright {
-                clear : right;
-            }
-            .top {
-                vertical-align: top;
-            }
-            .bottom {
-                vertical-align: bottom;
-            }
-            .fullwidth {
-                clear:both;
-                width: 100%;
-            }
-            .topLine {
-                border-top: solid 1px black;
-            }
-            .hspace-xs {
-                margin-right: 0.2 cm;
-            }
-            .hspace-s {
-                margin-right: 0.6cm
-            }
-            .hspace-m {
-                margin-right: 1.3cm
-            }
-            .hspace-l {
-                margin-right: 2cm
-            }
-            .vspace-xs {
-                margin-top: 0.3cm
-            }
-            .vspace-s {
-                margin-top: 0.6cm;
-            }
-            .vspace-m {
-                margin-top: 1.3cm
-            }
-            .vspace-l {
-                margin-top: 2cm
-            }
-            .normal {
-                font-size: 10pt;
-            }
-            .small {
-                font-size: 8pt;
-            }
-            .x-small {
-                font-size: 6.5pt;
-            }
-            .tiny {
-                font-size: 0.1pt;
-            }
-            .title {
-                font-size:13pt;
-                font-weight:bold;
-            }
-            .sum {
-                font-size:10pt;
-                font-weight:bold;
-            }
-            #positions th {
-                font-weight: bold;
-                border-bottom: solid 2px black;
-            }
-            #positions th.right {
-                float: none;
-                text-align:right;
-            }
-            td.line {
-                border-top: solid 1px black;
-            }
-            td.right {
-                float:none;
-                text-align:right;
-                padding-left: 0.2cm;
-                padding-right: 0cm;
-            }
-            .bg-grey {
-                background-color: #fafafa;
-                border: 5px solid #fafafa;
-            }
-            .textbox-right {
-                clear: both;
-                float:right;
-                min-width: 7cm;
-                padding-bottom: 0.2cm;
-            }
-            .bold-35 {
-                width: 3.5 cm;
-                font-weight: bold;
-            }
-            .details_category {
-                font-weight: bold;
-                width: 125px;
-                vertical-align: top;
-            }
+        <template id="report.style" name="style">
+            <style type="text/css">
+                footer {
+                    border-top: 1px solid black;
+                    text-align:center
+                }
+                body {
+                    color: #000 !important;
+                    font-family: Arial,sans-serif;
+                    font-size:9pt
+                }
+                .border-black td {
+                    border-top: 1px solid black !important;
+                }
+                .table-condensed > thead > tr > th {
+                    border-bottom: 1px solid black !important;
+                }
+                .zero_min_height {
+                    min-height: 0px !important;
+                }
+                /* by IT.artmin */
+                #from {
+                    width: 8.5cm;
+                }
+                #delivery {
+                    clear:right;
+                    width: 7 cm;
+                }
+                #invoice {
+                    clear:right;
+                    width: 7 cm;
+                }
+                #addressee {
+                    max-width: 8.5cm;
+                }
+                th, td {
+                    padding-right: 0.2cm;
+                    font-size: 8pt;
+                    padding-bottom: 0.05cm;
+                    padding-top: 0.05cm;
+                }
+                .right {
+                    float: right;
+                    padding-right: 0cm;
+                    padding-bottom: 0cm;
+                }
+                .center {
+                    text-align: center;
+                }
+                .left {
+                    float: left
+                }
+                .clearleft {
+                    clear : left;
+                }
+                .clearright {
+                    clear : right;
+                }
+                .top {
+                    vertical-align: top;
+                }
+                .bottom {
+                    vertical-align: bottom;
+                }
+                .fullwidth {
+                    clear:both;
+                    width: 100%;
+                }
+                .topLine {
+                    border-top: solid 1px black;
+                }
+                .hspace-xs {
+                    margin-right: 0.2 cm;
+                }
+                .hspace-s {
+                    margin-right: 0.6cm
+                }
+                .hspace-m {
+                    margin-right: 1.3cm
+                }
+                .hspace-l {
+                    margin-right: 2cm
+                }
+                .vspace-xs {
+                    margin-top: 0.3cm
+                }
+                .vspace-s {
+                    margin-top: 0.6cm;
+                }
+                .vspace-m {
+                    margin-top: 1.3cm
+                }
+                .vspace-l {
+                    margin-top: 2cm
+                }
+                .normal {
+                    font-size: 10pt;
+                }
+                .small {
+                    font-size: 8pt;
+                }
+                .x-small {
+                    font-size: 6.5pt;
+                }
+                .tiny {
+                    font-size: 0.1pt;
+                }
+                .title {
+                    font-size:13pt;
+                    font-weight:bold;
+                }
+                .sum {
+                    font-size:10pt;
+                    font-weight:bold;
+                }
+                #positions th {
+                    font-weight: bold;
+                    border-bottom: solid 2px black;
+                }
+                #positions th.right {
+                    float: none;
+                    text-align:right;
+                }
+                td.line {
+                    border-top: solid 1px black;
+                }
+                td.right {
+                    float:none;
+                    text-align:right;
+                    padding-left: 0.2cm;
+                    padding-right: 0cm;
+                }
+                .bg-grey {
+                    background-color: #fafafa;
+                    border: 5px solid #fafafa;
+                }
+                .textbox-right {
+                    clear: both;
+                    float:right;
+                    min-width: 7cm;
+                    padding-bottom: 0.2cm;
+                }
+                .bold-35 {
+                    width: 3.5 cm;
+                    font-weight: bold;
+                }
+                .details_category {
+                    font-weight: bold;
+                    width: 125px;
+                    vertical-align: top;
+                }
+            </style>
         </template>
     
         <!-- Override margins in paper format -->
