@@ -86,13 +86,56 @@
         <xpath expr="//form[@string='Contact']//field[@name='category_id']" position="before">
           <field name="first_name" placeholder="Vorname / Firmenzusatz" style="width: 70%"/>
         </xpath>
+        <xpath expr="//form[@string='Contact']//div[@class='oe_title']" position="after">
+          <div class="oe_right oe_button_box" name="buttons">
+            <button class="oe_inline oe_stat_button" type="action" attrs="{'invisible': [('customer', '=', False)]}" name="335" icon="fa-star" context="{'search_default_partner_id': active_id}" modifiers="{'invisible': [['customer', '=', false]]}" readonly="0">
+                <field string="Opportunities" name="opportunity_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" type="object" name="schedule_meeting" icon="fa-calendar" context="{'partner_id': active_id}">
+                <field string="Meetings" name="meeting_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" type="action" name="326" icon="fa-phone" context="{'search_default_partner_id': active_id, 'default_duration': 1.0}">
+                <field string="Calls" name="phonecall_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button type="action" class="oe_stat_button" id="invoice_button" icon="fa-pencil-square-o" name="753" attrs="{'invisible': [('customer', '=', False)]}" context="{'search_default_partner_id': active_id,'default_partner_id': active_id}" modifiers="{'invisible': [['customer', '=', false]]}" readonly="0">
+                        <div><strong><field name="total_invoiced" widget="monetary" modifiers="{'readonly': true}"/></strong><br/>Invoiced</div>
+            </button>
+            <button class="oe_inline oe_stat_button" type="action" name="440" attrs="{'invisible': [('customer', '=', False)]}" icon="fa-strikethrough" modifiers="{'invisible': [['customer', '=', false]]}" readonly="0">
+                <field string="Sales" name="sale_order_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" name="635" type="action" attrs="{'invisible': [('supplier', '=', False)]}" icon="fa-pencil-square-o" help="Supplier Invoices" modifiers="{'invisible': [['customer', '=', false]]}" readonly="0">
+                <field string="Supplier Inv." name="supplier_invoice_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" name="634" type="action" attrs="{'invisible': [('supplier', '=', False)]}" icon="fa-shopping-cart" modifiers="{'invisible': [['supplier', '=', false]]}" readonly="0">
+                <field string="Purchases" name="purchase_order_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button type="action" class="oe_stat_button" name="176" icon="fa-list" readonly="0">
+                <field string="Journal Items" name="journal_item_count" widget="statinfo" modifiers="{'readonly': true}"/>                        
+            </button>
+            <button class="oe_inline oe_stat_button" type="action" name="276" icon="fa-book" modifiers="{'invisible': [['supplier', '=', false]]}" readonly="0">
+                <field string="Contracts" name="contracts_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" type="action" context="{'search_default_partner_id': active_id, 'default_partner_id': active_id}" name="693" icon="fa-comments" readonly="0">
+                <field string="Claims" name="claim_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" type="action" name="366" context="{'search_default_partner_id': active_id, 'default_partner_id': active_id}" attrs="{'invisible': [('customer', '=', False)]}" icon="fa-bug" modifiers="{'invisible': [['customer', '=', false]]}" readonly="0">
+                <field string="Issues" name="issue_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>
+            <button class="oe_inline oe_stat_button" type="action" name="354" context="{'search_default_partner_id': active_id, 'default_partner_id': active_id}" icon="fa-tasks" readonly="0">
+                <field string="Tasks" name="task_count" widget="statinfo" modifiers="{'readonly': true}"/>
+            </button>     
+          </div>
+        </xpath>
+        <xpath expr="//form[@string='Contact']//div[@class='oe_title']" position="attributes">
+            <attribute name="class">oe_title oe_left</attribute>
+        </xpath>
         <xpath expr="//form[@string='Contact']//field[@name='function']" position="before">
           <field name="title"/>
           <field name="gender"/>
         </xpath>
         <!-- fax on pop-up -->
         <xpath expr="//form[@string='Contact']//field[@name='mobile']" position="after">
-          <field name="fax"/>
+          <field name="fax" widget="fax"/>
         </xpath>
         <!-- branch ids in pop-up -->
         <xpath expr="//form[@string='Contact']//field[@name='supplier']" position="before">
