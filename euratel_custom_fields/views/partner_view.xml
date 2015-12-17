@@ -106,6 +106,7 @@
               <field name="fax"/>
             </tree>
           </field>
+          <field name="comment"/>
         </xpath>
         <!-- Copy email, fax, phone, mobil to child partners -->
         <xpath expr="//field[@name='child_ids']" position="attributes">
