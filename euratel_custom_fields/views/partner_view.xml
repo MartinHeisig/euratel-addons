@@ -106,7 +106,7 @@
               <field name="fax"/>
             </tree>
           </field>
-          <field name="comment"/>
+          <field name="comment" placeholder="Put an internal note..."/>
         </xpath>
         <!-- Copy email, fax, phone, mobil to child partners -->
         <xpath expr="//field[@name='child_ids']" position="attributes">
