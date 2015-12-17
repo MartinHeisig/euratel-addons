@@ -149,6 +149,7 @@
         <field name="category_id" position="before">
           <field name="city"/>
           <field name="zip"/>
+          <field name="email"/>
         </field>
         <!-- Enable group by city -->
         <filter string="Country" position="after">
