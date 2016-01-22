@@ -19,37 +19,34 @@
 #
 ##############################################################################
 
-from openerp.osv import osv, fields
+# from openerp.osv import osv, fields
+from openerp import models, fields, api
+from openerp.exceptions import except_orm, Warning
 
-class euratel_partner(osv.osv):
+class euratel_partner(models.Model):
 
     _inherit = 'res.partner'
     _description = "Add custom fields for Euratel partner."
 
-    _columns = {
-        'debit_ref': fields.char('Lastschrift Mandatsreferenz', size=64),
-        'bga' : fields.char('BGA', size=64),
-        'first_name' : fields.char('Vorname / Firmenname Zusatz', size=64),
-        'gender' : fields.selection((('w','weiblich'),('m','männlich')), 
-                          'Geschlecht'),
-        'branch_ids' : fields.many2many(
-            'res.partner',
-            'res_partner_branch',
-            'partner_id',
-            'branch_id',
-            'Filialen'),
-        'oc_folder': fields.char('Owncloud-Verzeichnis'),
-    }
-
-    ''' Adds city to all displays of partners and gives possibility to show city
-    in many2one relation. '''
-    def name_get(self, cr, uid, ids, context=None):
-        if context is None:
-            context = {}
-        if isinstance(ids, (int, long)):
-            ids = [ids]
-        res = []
-        for record in self.browse(cr, uid, ids, context=context):
+    display_name = fields.Char(string='Name', compute='_compute_display_name')
+    debit_ref = fields.Char('Lastschrift Mandatsreferenz', size=64)
+    bga = fields.Char('BGA', size=64)
+    first_name = fields.Char('Vorname / Firmenname Zusatz', size=64)
+    gender = fields.Selection((('w','weiblich'),('m','männlich')), 'Geschlecht')
+    contact_add = fields.Many2one('res.partner', 'Add Contact', domain=[('active','=',True),('parent_id','=',False)])
+    contact_remove = fields.Many2one('res.partner', 'Remove Contact')
+    # contact_add = fields.dummy(relation='res.partner', string='Add Contact', type='many2one', domain=[('active','=',True),('parent_id','=',False)])
+    # contact_remove = fields.dummy(relation='res.partner', string='Remove Contact', type='many2one')
+    branch_ids = fields.Many2many('res.partner', 'res_partner_branch', 'partner_id', 'branch_id', 'Filialen')
+    oc_folder = fields.Char('Owncloud-Verzeichnis')
+    
+    '''Better Way for new Api but doesnt change the name in Many2One DropDown fields'''
+    @api.multi
+    @api.depends('name', 'parent_id.name', 'city', 'zip')
+    def _compute_display_name(self):
+        if self._context is None:
+            self._context = {}
+        for record in self:
             name = record.name
             if record.parent_id and not record.is_company:
                 name = "%s, %s" % (record.parent_name, name)
@@ -59,15 +56,84 @@ class euratel_partner(osv.osv):
                 name += ' (' + record.city + ')'
             elif record.zip:
                 name += ' (' + record.zip + ')'
-            if context.get('show_address_only'):
-                name = self._display_address(cr, uid, record, without_company=True, context=context)
-            if context.get('show_address'):
-                name = name + "\n" + self._display_address(cr, uid, record, without_company=True, context=context)
-            if context.get('show_street') and record.street:
+            if self._context.get('show_address_only'):
+                name = self._display_address(record, without_company=True)
+            if self._context.get('show_address'):
+                name = name + "\n" + self._display_address(record, without_company=True)
+            if self._context.get('show_street') and record.street:
                 name += "\n" + record.street
             name = name.replace('\n\n','\n')
             name = name.replace('\n\n','\n')
-            if context.get('show_email') and record.email:
+            if self._context.get('show_email') and record.email:
+                name = "%s <%s>" % (name, record.email)
+            record.display_name = name
+
+
+    ''' Adds city to all displays of partners and gives possibility to show city
+    in many2one relation.'''
+    @api.multi
+    @api.depends('name', 'parent_id.name', 'city', 'zip')
+    def name_get(self):
+        if self._context is None:
+            self._context = {}
+        res = []
+        for record in self:
+            name = record.name
+            if record.parent_id and not record.is_company:
+                name = "%s, %s" % (record.parent_name, name)
+            if record.city and record.zip:
+                name += ' (' + record.city + ' ' + record.zip + ')'
+            elif record.city:
+                name += ' (' + record.city + ')'
+            elif record.zip:
+                name += ' (' + record.zip + ')'
+            if self._context.get('show_address_only'):
+                name = self._display_address(record, without_company=True)
+            if self._context.get('show_address'):
+                name = name + "\n" + self._display_address(record, without_company=True)
+            if self._context.get('show_street') and record.street:
+                name += "\n" + record.street
+            name = name.replace('\n\n','\n')
+            name = name.replace('\n\n','\n')
+            if self._context.get('show_email') and record.email:
                 name = "%s <%s>" % (name, record.email)
             res.append((record.id, name))
         return res
+        
+    @api.multi
+    def add_contact(self, context={}):
+        for record in self:
+            # raise except_orm('ADD', str(context))
+            if context.get('contact_add'):
+                self.env['res.partner'].browse(context.get('contact_add')).parent_id = record
+            record.contact_add = False
+        return
+    
+    @api.multi
+    def remove_contact(self, context={}):
+        for record in self:
+            # raise except_orm('REMOVE', str(context))
+            if context.get('contact_remove'):
+                # raise except_orm('HUHU', context.get('contact_remove'))
+                self.env['res.partner'].browse(context.get('contact_remove')).parent_id = False
+                self.env['res.partner'].browse(context.get('contact_remove')).use_parent_address = False
+            record.contact_remove = False
+        return
+    
+    @api.multi
+    def write(self, vals):
+        if vals.get('contact_add'):
+            vals['contact_add'] = False
+        if vals.get('contact_remove'):
+            vals['contact_remove'] = False
+        result = super(euratel_partner, self).write(vals)
+        return result
+        
+    @api.model
+    def create(self, vals):
+        if vals.get('contact_add'):
+            vals['contact_add'] = False
+        if vals.get('contact_remove'):
+            vals['contact_remove'] = False
+        partner = super(euratel_partner, self).create(vals)
+        return partner
