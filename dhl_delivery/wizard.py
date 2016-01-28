@@ -3,6 +3,7 @@
 
 from openerp import models, fields, api
 from openerp.osv import osv
+from openerp.tools.translate import _
 from math import ceil
 
 from subprocess import Popen, PIPE
@@ -55,12 +56,19 @@ class DHLStockTransferDetails(models.TransientModel):
         if self.create_dhl_delivery:
             parcels = 0
             sender = None
+            # changed to sender all time amamedis
+            # if need of single warehouse each time need to be fixed in the lines below because of no partner in source_loc while dropshipping
+            sender = self.picking_id.company_id.partner_id
+            
             # Get number of parcels to send
             for item in self.item_ids:
                 if item.product_id.pcs_per_box != 0:
                     # Get sender address
                     if not sender:
-                        sender = item.sourceloc_id.partner_id
+                        if self.picking_id.picking_type_id and self.picking_id.picking_type_id.id == self.env['ir.model.data'].get_object_reference('stock_dropshipping', 'picking_type_dropship')[1]:
+                            sender = self.picking_id.partner_id
+                        else:
+                            sender = item.sourceloc_id.partner_id
                     quantity = float(item.quantity) / item.product_uom_id.factor
                     pcs_per_box = float(item.product_id.pcs_per_box) / item.product_id.uom_id.factor
                     parcels += int(ceil(quantity / pcs_per_box))
@@ -94,13 +102,20 @@ class DHLStockTransferDetails(models.TransientModel):
                     street_as_list = sender.street.split(' ')
                     sh_street = ' '.join(street_as_list[:-1]).strip()
                     sh_street_nr = street_as_list[-1].strip()
-                if self.picking_id.partner_id.street_name and self.picking_id.partner_id.street_number:
+                if self.picking_id.move_lines[0].partner_id.street_name and self.picking_id.move_lines[0].partner_id.street_number:
+                    rc_street = self.picking_id.move_lines[0].partner_id.street_name.strip()
+                    rc_street_nr = self.picking_id.move_lines[0].partner_id.street_number.strip()
+                else:
+                    street_as_list = self.picking_id.move_lines[0].partner_id.street.split(' ')
+                    rc_street = ' '.join(street_as_list[:-1]).strip()
+                    rc_street_nr = street_as_list[-1].strip()
+                '''if self.picking_id.partner_id.street_name and self.picking_id.partner_id.street_number:
                     rc_street = self.picking_id.partner_id.street_name.strip()
                     rc_street_nr = self.picking_id.partner_id.street_number.strip()
                 else:
                     street_as_list = self.picking_id.partner_id.street.split(' ')
                     rc_street = ' '.join(street_as_list[:-1]).strip()
-                    rc_street_nr = street_as_list[-1].strip()
+                    rc_street_nr = street_as_list[-1].strip()'''
             except:
                 raise osv.except_osv(('Fehler'), ('Beim Auslesen und gegebenenfalls Aufsplitten trat ein Fehler auf. Möglicher Grund könnte sein, dass das Modul "partner_street_number", welches die Adresszeile in Straße und Hausnummer aufsplittet nicht installiert ist.'))
             company = self.picking_id.company_id
@@ -139,14 +154,14 @@ class DHLStockTransferDetails(models.TransientModel):
             # Set arguments
             vals = {
                     # Reciever details
-                    RC_CONTACT_EMAIL : self.picking_id.partner_id.email,
-                    RC_CONTACT_PHONE : self.picking_id.partner_id.phone,
-                    RC_COMPANY_NAME : self.picking_id.partner_id.name,
-                    RC_COMPANY_NAME_2 : self.picking_id.partner_id.first_name,
-                    RC_LOCAL_CITY : self.picking_id.partner_id.city,
+                    RC_CONTACT_EMAIL : self.picking_id.move_lines[0].partner_id.email,
+                    RC_CONTACT_PHONE : self.picking_id.move_lines[0].partner_id.phone,
+                    RC_COMPANY_NAME : self.picking_id.move_lines[0].partner_id.is_company and self.picking_id.move_lines[0].partner_id.name or self.picking_id.move_lines[0].partner_id.parent_id.name,
+                    RC_COMPANY_NAME_2 : self.picking_id.move_lines[0].partner_id.is_company and self.picking_id.move_lines[0].partner_id.first_name or self.picking_id.move_lines[0].partner_id.first_name + " " + self.picking_id.move_lines[0].partner_id.name,
+                    RC_LOCAL_CITY : self.picking_id.move_lines[0].partner_id.city,
                     RC_LOCAL_STREET : rc_street,
                     RC_LOCAL_STREETNR : rc_street_nr,
-                    RC_LOCAL_ZIP : self.picking_id.partner_id.zip,
+                    RC_LOCAL_ZIP : self.picking_id.move_lines[0].partner_id.zip,
                     NUMBER_OF_SHIPMENTS : str(parcels),
                     CUSTOMER_REFERENCE : self.picking_id.name,
                     # Sender details
@@ -191,7 +206,8 @@ class DHLStockTransferDetails(models.TransientModel):
                         dhl_delivery = self.env['dhl.delivery'].create({
                             'name' : shipment_number,
                             'delivery_order' : self.picking_id.id,
-                            'url' : shipment_url,
+                            # uncomment after adding field url to the model
+                            # 'url' : shipment_url,
                             })
                         # Assign dhl delivery to delivery order
                         self.picking_id.dhl_deliveries |= dhl_delivery
@@ -224,6 +240,23 @@ class DHLStockTransferDetails(models.TransientModel):
                     res = {'warning': {
                                       'title': _('Warnung'),
                                       'message': _('Konnte Sammelpdf nicht speichern. Pfad: ' + path)
+                                      }
+                          }
+                    return res
+                # Add PDF as attachment to delivery note
+                try:
+                    attach_id = self.env['ir.attachment'].create({
+                        'name':filename,
+                        'res_name': filename,
+                        'type': 'binary',
+                        'res_model': 'stock.picking',
+                        'res_id': self.picking_id.id,
+                        'datas': base64.b64encode(open(path, 'rb').read()),
+                    })
+                except:
+                    res = {'warning': {
+                                      'title': _('Warnung'),
+                                      'message': _('Konnte PDF nicht als Attachment hinzufügen.')
                                       }
                           }
                     return res
@@ -266,20 +299,6 @@ class DHLStockTransferDetails(models.TransientModel):
                     # Execute owncloud syncing
                     out, err = Popen(command, stdin=PIPE, stdout=PIPE,
                             stderr=PIPE).communicate()
-                '''
-                # Append pdf to self picking
-                #with open(path, 'rb') as pdf_file:
-                #    data = pdf_file.read()
-                #    data = base64.encode(data)
-                self.env['ir.attachment'].create({
-                  'name' : filename,
-                  'res_model' : 'stock.picking',
-                  'res_id' : self.picking_id.id,
-                  'description' : 'DHL Sendescheine Lieferung '
-                                  + self.picking_id.name,
-                  #'datas' : data,
-                  })
-                '''
 
         # Call super method
         super(DHLStockTransferDetails, self).do_detailed_transfer()
