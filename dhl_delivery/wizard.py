@@ -91,6 +91,13 @@ class DHLStockTransferDetails(models.TransientModel):
             if not company.oc_local_dir:
                 raise osv.except_osv('DHL Versand Einstellungen',
                             'Bitte lokales owncloud Verzeichnis angeben.')
+                            
+            receiver = self.picking_id.move_lines[0].partner_id
+            if not receiver:
+                raise osv.except_osv(('Fehler'), ('Empfänger für die Pakete '
+                    + ' konnte nicht gesetzt werden. Ursache: Lieferschein enthält keine Auftragszeilen oder diesen ist kein Empfänger zugeordnet.'))
+            if (receiver.street == '' or receiver.city == '' or receiver.zip == ''):
+                raise osv.except_osv(('DHL Versand'), ('Lieferadresse ist unvollständig.')) 
 
             # Prepare call of Java tool
             # Divide street and street number for sender and reciever
@@ -102,40 +109,39 @@ class DHLStockTransferDetails(models.TransientModel):
                     street_as_list = sender.street.split(' ')
                     sh_street = ' '.join(street_as_list[:-1]).strip()
                     sh_street_nr = street_as_list[-1].strip()
-                if self.picking_id.move_lines[0].partner_id.street_name and self.picking_id.move_lines[0].partner_id.street_number:
-                    rc_street = self.picking_id.move_lines[0].partner_id.street_name.strip()
-                    rc_street_nr = self.picking_id.move_lines[0].partner_id.street_number.strip()
+                if receiver.street_name and receiver.street_number:
+                    rc_street = receiver.street_name.strip()
+                    rc_street_nr = receiver.street_number.strip()
                 else:
-                    street_as_list = self.picking_id.move_lines[0].partner_id.street.split(' ')
+                    street_as_list = receiver.street.split(' ')
                     rc_street = ' '.join(street_as_list[:-1]).strip()
                     rc_street_nr = street_as_list[-1].strip()
-                '''if self.picking_id.partner_id.street_name and self.picking_id.partner_id.street_number:
-                    rc_street = self.picking_id.partner_id.street_name.strip()
-                    rc_street_nr = self.picking_id.partner_id.street_number.strip()
-                else:
-                    street_as_list = self.picking_id.partner_id.street.split(' ')
-                    rc_street = ' '.join(street_as_list[:-1]).strip()
-                    rc_street_nr = street_as_list[-1].strip()'''
             except:
                 raise osv.except_osv(('Fehler'), ('Beim Auslesen und gegebenenfalls Aufsplitten trat ein Fehler auf. Möglicher Grund könnte sein, dass das Modul "partner_street_number", welches die Adresszeile in Straße und Hausnummer aufsplittet nicht installiert ist.'))
             company = self.picking_id.company_id
             
             # minimal first check for usage of DHL field lengths
-            if self.picking_id.partner_id.name and len(self.picking_id.partner_id.name) > 30:
+            if receiver.name and len(receiver.name) > 30:
                 raise osv.except_osv(('Fehler'), ('Feld Name beim Empfänger übersteigt die maximale Länge von 30 Zeichen'))
-            if self.picking_id.partner_id.first_name and len(self.picking_id.partner_id.first_name) > 30:
+            if receiver.first_name and len(receiver.first_name) > 30:
                 raise osv.except_osv(('Fehler'), ('Feld Vorname/Firmenzusatz beim Empfänger übersteigt die maximale Länge von 30 Zeichen'))
             if rc_street and len(rc_street) > 40:
                 raise osv.except_osv(('Fehler'), ('Feld Strasse beim Empfänger übersteigt die maximale Länge von 40 Zeichen'))
             if rc_street_nr and len(rc_street_nr) > 7:
                 # need to test with 10
                 raise osv.except_osv(('Fehler'), ('Feld Hausnummer beim Empfänger übersteigt die maximale Länge von 7 Zeichen'))
-            if self.picking_id.partner_id.zip and len(self.picking_id.partner_id.zip) > 5:
-                # need to be raised to 10 for intenational shipment
+            if receiver.zip and len(receiver.zip) > 5:
+                # need to be raised to 10 for international shipment
                 raise osv.except_osv(('Fehler'), ('Feld PLZ beim Empfänger übersteigt die maximale Länge von 5 Zeichen (da Deutschland voreingestellt)'))
-            if self.picking_id.partner_id.city and len(self.picking_id.partner_id.city) > 50:
+            if receiver.city and len(receiver.city) > 50:
                 # maybe only 20 based on use of district?
                 raise osv.except_osv(('Fehler'), ('Feld Stadt beim Empfänger übersteigt die maximale Länge von 50 Zeichen'))
+            if not receiver.is_company and not receiver.parent_id:
+                # check if parent_id is set for a non company
+                raise osv.except_osv(('Fehler'), ('Lieferadresse ist kein Unternehmen und ist auch keinem Unternehmen zugeordnet'))
+            if not receiver.email and not receiver.phone:
+                # one of them have to be set
+                raise osv.except_osv(('Fehler'), ('Lieferkontakt hat weder E-Mail noch Telefonnummer. Eins davon muss aber mindestens gesetzt sein.'))
                 
             if sender.name and len(sender.name) > 30:
                 raise osv.except_osv(('Fehler'), ('Feld Name beim Sender übersteigt die maximale Länge von 30 Zeichen'))
@@ -150,18 +156,21 @@ class DHLStockTransferDetails(models.TransientModel):
             if sender.city and len(sender.city) > 50:
                 # maybe only 20 based on use of district?
                 raise osv.except_osv(('Fehler'), ('Feld Stadt beim Sender übersteigt die maximale Länge von 50 Zeichen'))
+            if not sender.email and not sender.phone:
+                # one of them have to be set
+                raise osv.except_osv(('Fehler'), ('Sender hat weder E-Mail noch Telefonnummer. Eins davon muss aber mindestens gesetzt sein.'))
             
             # Set arguments
             vals = {
-                    # Reciever details
-                    RC_CONTACT_EMAIL : self.picking_id.move_lines[0].partner_id.email,
-                    RC_CONTACT_PHONE : self.picking_id.move_lines[0].partner_id.phone,
-                    RC_COMPANY_NAME : self.picking_id.move_lines[0].partner_id.is_company and self.picking_id.move_lines[0].partner_id.name or self.picking_id.move_lines[0].partner_id.parent_id.name,
-                    RC_COMPANY_NAME_2 : self.picking_id.move_lines[0].partner_id.is_company and self.picking_id.move_lines[0].partner_id.first_name or self.picking_id.move_lines[0].partner_id.first_name + " " + self.picking_id.move_lines[0].partner_id.name,
-                    RC_LOCAL_CITY : self.picking_id.move_lines[0].partner_id.city,
+                    # Receiver details
+                    RC_CONTACT_EMAIL : receiver.email,
+                    RC_CONTACT_PHONE : receiver.phone,
+                    RC_COMPANY_NAME : receiver.is_company and receiver.name or receiver.parent_id.name,
+                    RC_COMPANY_NAME_2 : receiver.is_company and receiver.first_name or not receiver.is_company and ' '.join([receiver.first_name or '', receiver.name or '']).strip(),
+                    RC_LOCAL_CITY : receiver.city,
                     RC_LOCAL_STREET : rc_street,
                     RC_LOCAL_STREETNR : rc_street_nr,
-                    RC_LOCAL_ZIP : self.picking_id.move_lines[0].partner_id.zip,
+                    RC_LOCAL_ZIP : receiver.zip,
                     NUMBER_OF_SHIPMENTS : str(parcels),
                     CUSTOMER_REFERENCE : self.picking_id.name,
                     # Sender details
