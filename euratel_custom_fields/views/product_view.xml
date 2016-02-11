@@ -13,6 +13,18 @@
                 </field>
             </field>
         </record>
+        
+        <record model="ir.ui.view" id="form_view_ama_prod_tmpl_o">
+            <field name="name">view.form.ama.prod.tmpl_o</field>
+            <field name="model">product.template</field>
+            <field name="priority">100</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <field name="value_ids" position="attributes">
+                    <attribute name="widget">many2many_checkboxes</attribute>
+                </field>
+            </field>
+        </record>
 
   
   </data>

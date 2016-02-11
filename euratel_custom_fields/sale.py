@@ -59,3 +59,20 @@ class amamedis_sale_order(osv.osv):
             'delivery_date' : fields.char('Lieferdatum'),
             'client_order_date' : fields.date('Bestelldatum'),
             }
+
+'''class amamedis_sale_order_line(osv.osv):
+
+    _inherit = 'sale.order.line'
+    _description = "Add custom fields to sale order line."
+    
+    _columns = {
+            'partner_ref' : fields.related('order_partner_id', 'ref', type='char', store=True, string='Kundennummer', readonly=True),
+            }
+    
+    def _get_partner_id(self, cr, uid, ids, partner_id, context=None):
+        if partner_id:
+            return self.pool.get('res.partner').browse(cr, uid, partner_id, context)
+    
+    def _get_partner_ref(self, cr, uid, ids, partner_id, context=None):
+        if partner_id:
+            return self.pool.get('res.partner').browse(cr, uid, partner_id, context).ref'''

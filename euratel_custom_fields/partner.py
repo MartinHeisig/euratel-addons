@@ -62,6 +62,8 @@ class euratel_partner(models.Model):
                 name = name + "\n" + self._display_address(record, without_company=True)
             if self._context.get('show_street') and record.street:
                 name += "\n" + record.street
+            if self._context.get('show_ref') and record.ref:
+                name += "\n" + record.ref
             name = name.replace('\n\n','\n')
             name = name.replace('\n\n','\n')
             if self._context.get('show_email') and record.email:
@@ -93,6 +95,8 @@ class euratel_partner(models.Model):
                 name = name + "\n" + self._display_address(record, without_company=True)
             if self._context.get('show_street') and record.street:
                 name += "\n" + record.street
+            if self._context.get('show_ref') and record.ref:
+                name += "\n" + record.ref
             name = name.replace('\n\n','\n')
             name = name.replace('\n\n','\n')
             if self._context.get('show_email') and record.email:
