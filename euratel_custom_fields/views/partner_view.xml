@@ -35,8 +35,19 @@
             placeholder="Vorname / Firmenzusatz" 
             />
         </field>
-        <field name="title" position="after">
+        <field name="title" position="replace">
+        </field>
+        <label for="street" position="before">
+            <field name="title"/>
+            <field name="gender" attrs="{'invisible':[('is_company','=', True)]}"/>
+        </label>
+        <!--field name="title" position="after">
           <field name="gender" attrs="{'invisible':[('is_company','=', True)]}"/>
+        </field-->
+        <field name="website" position="replace">
+        </field>
+        <field name="email" position="after">
+            <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
         </field>
         <page name="internal_notes" position="after">
           <page string="Weiteres">
