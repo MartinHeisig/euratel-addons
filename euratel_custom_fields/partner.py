@@ -19,7 +19,6 @@
 #
 ##############################################################################
 
-# from openerp.osv import osv, fields
 from openerp import models, fields, api
 from openerp.exceptions import except_orm, Warning
 
@@ -35,8 +34,6 @@ class euratel_partner(models.Model):
     gender = fields.Selection((('w','weiblich'),('m','männlich')), 'Geschlecht')
     contact_add = fields.Many2one('res.partner', 'Add Contact', domain=[('active','=',True),('parent_id','=',False)])
     contact_remove = fields.Many2one('res.partner', 'Remove Contact')
-    # contact_add = fields.dummy(relation='res.partner', string='Add Contact', type='many2one', domain=[('active','=',True),('parent_id','=',False)])
-    # contact_remove = fields.dummy(relation='res.partner', string='Remove Contact', type='many2one')
     branch_ids = fields.Many2many('res.partner', 'res_partner_branch', 'partner_id', 'branch_id', 'Filialen')
     oc_folder = fields.Char('Owncloud-Verzeichnis')
     

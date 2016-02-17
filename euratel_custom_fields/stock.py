@@ -19,13 +19,14 @@
 #
 ##############################################################################
 
-from openerp.osv import osv, fields
+from openerp import models, fields, api
+from openerp.exceptions import except_orm, Warning
+from openerp.tools.translate import _
 
-class amamedis_stock(osv.osv):
+class amamedis_stock(models.Model):
 
     _inherit = 'stock.picking'
     _description = "Add custom field for Amamedis sales team."
 
-    _columns = {
-            'section_id' : fields.many2one('crm.case.section', 'Verkaufsteam'),
-    }
+    section_id = fields.Many2one('crm.case.section', 'Verkaufsteam')
+    

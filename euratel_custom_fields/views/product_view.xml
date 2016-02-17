@@ -8,8 +8,8 @@
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
                 <field name="description_sale" position="after">
-                    <separator string="Description for Order Slips"/>
-                    <field name="description_orderslip" placeholder="note for order slips..."/>
+                    <separator string="Beschreibung für Bestellscheine"/>
+                    <field name="description_orderslip" placeholder="Anmerkungen, die auf den Bestellscheinen ausgegeben werden ..."/>
                 </field>
             </field>
         </record>
@@ -26,6 +26,49 @@
             </field>
         </record>
 
-  
-  </data>
+        <record model="ir.ui.view" id="product_form_view">
+            <field name="name">product.form.view</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view" />
+            <field name="arch" type="xml">
+                <field name="type" position="before">
+                    <field name="min_quantity"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_packaging_tree_view_product">
+            <field name="name">product.packaging.tree.view.product</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_tree_view_product" />
+            <field name="arch" type="xml">
+                <field name="qty" position="before">
+                    <field name="sequence"/>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_packaging_form_view_without_product">
+            <field name="name">product.packaging.form.view.without.product</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_form_view_without_product" />
+            <field name="arch" type="xml">
+                <field name="sequence" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_packaging_form_view">
+            <field name="name">product.packaging.form.view</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_form_view" />
+            <field name="arch" type="xml">
+                <field name="sequence" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </field>
+            </field>
+        </record>
+    
+    </data>
 </openerp>

@@ -9,11 +9,7 @@
       <field name="inherit_id" ref="sales_team.crm_case_section_view_form"/>
       <field name="arch" type="xml">
         <xpath expr="//div[@class='oe_title']" position="before">
-          <field 
-            name="image"
-            widget="image"
-            class="oe_left oe_avatar"
-            options="{'preview_image': 'image_medium', 'size': [90, 90]}"/>
+          <field name="image" widget='image' class="oe_left oe_avatar" options='{"preview_image": "image_medium"}'/>
         </xpath>
         <page string="Notes" position="after">
           <page string="Report-Konfiguration">
@@ -55,10 +51,6 @@
         <field name="partner_id" position="attributes">
             <attribute name="context">{'search_default_customer':1, 'show_address': 1, 'show_ref': 1}</attribute>
         </field>
-        <!--field name="address_allotment_id" position="after">
-            <field name="order_partner_id" context="{'default_order_partner_id':parent.partner_id}"/>
-            <field name="partner_ref"/>
-        </field-->
       </field>
     </record>
 
