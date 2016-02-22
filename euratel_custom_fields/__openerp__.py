@@ -16,9 +16,9 @@ Kundenansicht:
     'author': 'artmin IT-Dienstleistungen',
     'depends': ['sale', 'account'],
     'data': [
-        'views/partner_view.xml',
-        'views/product_view.xml',
-        'views/sale_view.xml',
+        # 'views/partner_view.xml',
+        # 'views/product_view.xml',
+        # 'views/sale_view.xml',
     ],
     'installable': True,
     'auto-install' : False,
