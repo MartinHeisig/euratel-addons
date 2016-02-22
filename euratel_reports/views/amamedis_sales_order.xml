@@ -192,20 +192,20 @@
 
           <div class="textbox-right vspace-xs">
             <div class="title"
-              t-if="o.state not in ['draft','sent']">
+              t-if="o.state not in ['draft','sent'] or o.print_quotation_as_order">
               AUFTRAGSBESTÄTIGUNG
             </div>
             <div class="title"
-              t-if="o.state in ['draft','sent']">
+              t-if="o.state in ['draft','sent'] and not o.print_quotation_as_order">
               ANGEBOT
             </div>
             <table>
               <tr>
                 <td style="padding-right: 0.5cm">
-                  <t t-if="o.state not in ['draft','sent']">
+                  <t t-if="o.state not in ['draft','sent'] or o.print_quotation_as_order">
                     <b>Auftragsnr.</b>
                   </t>
-                  <t t-if="o.state in ['draft','sent']">
+                  <t t-if="o.state in ['draft','sent'] and not o.print_quotation_as_order">
                     <b>Angebotsnr.</b>
                   </t>
                 </td>
