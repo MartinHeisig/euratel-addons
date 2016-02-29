@@ -202,14 +202,14 @@
               <t t-foreach="o.tax_line" t-as="tax">
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 7%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="4">Zwischensumme 7&amp;#x202f;%</td>
+                  <td colspan="4">Zwischensumme 7,00 &amp;#x202f;%</td>
                   <td class="right">
                     <span t-esc="'{:,.2f}'.format(tax.base).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                   </td>
                 </tr>
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 19%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="4">Zwischensumme 19&amp;#x202f;%</td>
+                  <td colspan="4">Zwischensumme 19,00 &amp;#x202f;%</td>
                   <td class="right">
                     <span t-esc="'{:,.2f}'.format(tax.base).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                   </td>
@@ -218,14 +218,14 @@
               <t t-foreach="o.tax_line" t-as="tax">
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 7%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="4">7 %&amp;#x202f;MwSt.</td>
+                  <td colspan="4">Mehrwertsteuer 7,00 %&amp;#x202f;</td>
                   <td class="right">
                     <span t-field="tax.amount"/>&amp;#x202f;€
                   </td>
                 </tr>
                 <tr t-if="tax.account_id.name == 'Umsatzsteuer 19%'">
                   <td>&amp;nbsp;</td>
-                  <td colspan="4">19 %&amp;#x202f;MwSt.</td>
+                  <td colspan="4">Mehrwertsteuer 19,00 %&amp;#x202f;.</td>
                   <td class="right">
                     <span t-field="tax.amount"/>&amp;#x202f;€
                   </td>
@@ -234,7 +234,7 @@
               
               <tr>
                 <td>&amp;nbsp;</td>
-                <td class="sum line" colspan="4">Rechnungsbetrag</td>
+                <td class="sum line" colspan="4">Gesamtsumme Brutto</td>
                 <td class="sum line right">
                   <span t-esc="'{:,.2f}'.format(o.amount_total).replace(',','X').replace('.',',').replace('X','.')"/>&amp;#x202f;€
                 </td>
