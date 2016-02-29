@@ -125,7 +125,7 @@
                 <th>POS</th>
                 <th>Artikel</th>
                 <th class="right">Menge</th>
-                <th class="right">Preis/PE</th>
+                <th class="right" style="padding-left:0.2cm;">Preis/PE</th>
                 <th class="right">PE</th>
                 <th class="right">Summe</th>
               </tr>
