@@ -4,7 +4,7 @@
   
     <!-- sales order -->
     <template id="report_saleorder_amamedis" 
-      inherit_id="sale.report_saleorder_document">
+      inherit_id="sale.report_saleorder_document" priority="20">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->

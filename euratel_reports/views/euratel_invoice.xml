@@ -4,7 +4,7 @@
   
     <!-- invoice -->
     <template id="report_invoice_document_amamedis" 
-      inherit_id="account.report_invoice_document">
+      inherit_id="account.report_invoice_document" priority="20">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->

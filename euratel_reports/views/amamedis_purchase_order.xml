@@ -2,7 +2,7 @@
 <openerp>
   <data>
     <!-- make purchase order report looks like a delivery note -->
-    <template id="report_purchaseorder_amamedis" inherit_id="purchase.report_purchaseorder_document">
+    <template id="report_purchaseorder_amamedis" inherit_id="purchase.report_purchaseorder_document" priority="20">
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->
