@@ -7,11 +7,11 @@
       <xpath expr="//div[@class='page']" position="replace">
         <div class="page">
           <!-- Multicompany -->
-          <t t-if="o.move_lines and o.move_lines[0].partner_id">
-            <t t-set="section" t-value="o.move_lines[0].partner_id.section_id"/>
-            <t t-if="not o.move_lines[0].partner_id.is_company">
-              <t t-if="o.move_lines[0].partner_id.parent_id">
-                <t t-set="section" t-value="o.move_lines[0].partner_id.parent_id.section_id"/>
+          <t t-if="o.delivery_address_id">
+            <t t-set="section" t-value="o.delivery_address_id.section_id"/>
+            <t t-if="o.delivery_address_id.is_company">
+              <t t-if="o.delivery_address_id.parent_id">
+                <t t-set="section" t-value="o.delivery_address_id.parent_id.section_id"/>
               </t>
             </t>
           </t>
@@ -28,34 +28,34 @@
           <!--t t-call="euratel_reports.euratel_external_report_to"/-->
           
           <div class="vspace-xs clearleft left small" id="addressee">
-                <div class="x-small" t-if="not o.move_lines[0].partner_id.country_id or not o.move_lines[0].partner_id.street2">&#160;</div>
+                <div class="x-small" t-if="not o.delivery_address_id.country_id or not o.delivery_address_id.street2">&#160;</div>
                 <!-- If Partner is a person print parent id, first and last name -->
-                <t t-if="not o.move_lines[0].partner_id.is_company">
-                    <t t-if="o.move_lines[0].partner_id.parent_id">
-                        <div t-field="o.move_lines[0].partner_id.parent_id.name"/>
-						<div t-if="o.move_lines[0].partner_id.parent_id.first_name" t-field="o.move_lines[0].partner_id.parent_id.first_name"/>
+                <t t-if="not o.delivery_address_id.is_company">
+                    <t t-if="o.delivery_address_id.parent_id">
+                        <div t-field="o.delivery_address_id.parent_id.name"/>
+						<div t-if="o.delivery_address_id.parent_id.first_name" t-field="o.delivery_address_id.parent_id.first_name"/>
                     </t>
                     <div>
-                        <span t-if="o.move_lines[0].partner_id.gender == 'm'">Herrn</span>
-                        <span t-if="o.move_lines[0].partner_id.gender == 'w'">Frau</span>
-                        <span t-if="o.move_lines[0].partner_id.title.shortcut" t-field="o.move_lines[0].partner_id.title.shortcut"/>
-                        <span t-field="o.move_lines[0].partner_id.first_name"/>
-                        <span t-field="o.move_lines[0].partner_id.name"/>
+                        <span t-if="o.delivery_address_id.gender == 'm'">Herrn</span>
+                        <span t-if="o.delivery_address_id.gender == 'w'">Frau</span>
+                        <span t-if="o.delivery_address_id.title.shortcut" t-field="o.delivery_address_id.title.shortcut"/>
+                        <span t-field="o.delivery_address_id.first_name"/>
+                        <span t-field="o.delivery_address_id.name"/>
                     </div>
                 </t>
                 <!-- If partner is a company print company name first -->
-                <t t-if="o.move_lines[0].partner_id.is_company">
-                    <div t-field="o.move_lines[0].partner_id.name"/>
-                    <div t-if="o.move_lines[0].partner_id.first_name" t-field="o.move_lines[0].partner_id.first_name"/>
+                <t t-if="o.delivery_address_id.is_company">
+                    <div t-field="o.delivery_address_id.name"/>
+                    <div t-if="o.delivery_address_id.first_name" t-field="o.delivery_address_id.first_name"/>
                 </t>
-                <div t-field="o.move_lines[0].partner_id.street"/>
-                <div t-if="o.move_lines[0].partner_id.street2" t-field="o.move_lines[0].partner_id.street2"/>
+                <div t-field="o.delivery_address_id.street"/>
+                <div t-if="o.delivery_address_id.street2" t-field="o.delivery_address_id.street2"/>
                 <div>
-                    <span t-field="o.move_lines[0].partner_id.zip"/>
-                    <span t-field="o.move_lines[0].partner_id.city"/>
+                    <span t-field="o.delivery_address_id.zip"/>
+                    <span t-field="o.delivery_address_id.city"/>
                 </div>
-                <t t-if="o.move_lines[0].partner_id.country_id">
-                    <div><t t-if="o.move_lines[0].partner_id.country_id.code != 'DE'"><span t-field="o.move_lines[0].partner_id.country_id.name"/></t></div>
+                <t t-if="o.delivery_address_id.country_id">
+                    <div><t t-if="o.delivery_address_id.country_id.code != 'DE'"><span t-field="o.delivery_address_id.country_id.name"/></t></div>
                 </t>
           </div>
           
