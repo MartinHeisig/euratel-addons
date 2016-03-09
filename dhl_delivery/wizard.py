@@ -14,6 +14,9 @@ import datetime
 import os
 import shutil
 import errno
+import logging
+
+_logger = logging.getLogger(__name__)
 
 from constants import *
 
@@ -33,7 +36,15 @@ class DHLStockTransferDetails(models.TransientModel):
         res = []
         for key, value in vals.iteritems():
           if value and value.strip() != '':
-            argument = [key + '=' + value.encode('utf-8').strip()]
+            # argument = [key + '=' + value.encode('utf-8').strip()]
+            '''str(value).replace("ä", "ae")
+            str(value).replace("ö", "oe")
+            str(value).replace("ü", "ue")
+            str(value).replace("Ä", "Ae")
+            str(value).replace("Ö", "Oe")
+            str(value).replace("Ü", "Ue")
+            str(value).replace("ß", "ss")'''
+            argument = [key + '=' + value.encode('iso-8859-1').strip()]
             res.extend(argument)
         return res
 
@@ -92,7 +103,8 @@ class DHLStockTransferDetails(models.TransientModel):
                 raise osv.except_osv('DHL Versand Einstellungen',
                             'Bitte lokales owncloud Verzeichnis angeben.')
                             
-            receiver = self.picking_id.move_lines[0].partner_id
+            receiver = self.picking_id.delivery_address_id
+            # receiver = self.picking_id.move_lines[0].partner_id
             if not receiver:
                 raise osv.except_osv(('Fehler'), ('Empfänger für die Pakete '
                     + ' konnte nicht gesetzt werden. Ursache: Lieferschein enthält keine Auftragszeilen oder diesen ist kein Empfänger zugeordnet.'))
@@ -189,15 +201,20 @@ class DHLStockTransferDetails(models.TransientModel):
                     EKP : company.dhl_ekp,
                     PARTNER_ID : company.dhl_partner_id,
                     }
+            _logger.info("Anfrage nach Zusammenbau: " + str(vals))
             arguments = self._assamble_shipment_arguments(vals)
-            print arguments
+            _logger.info("Anfrage nach UTF-8 Kodierung: " + str(arguments))
+            # print arguments
             # Call Java program
             program_name = "./dhl.jar"
             command = ["java", "-jar", "./dhl.jar"]
             command.extend(arguments)
+            # _logger.info(str(command))
             out, err = Popen(command, stdin=PIPE, stdout=PIPE,
                     stderr=PIPE, cwd="/opt/dhl").communicate()
             # Raise error if we get content in stderr
+            
+            _logger.info("Antwort DHL wie sie aus JAVA kommt: " + str(out))
             if err != '':
                 raise osv.except_osv('DHL Versand - Java', err)
             else:

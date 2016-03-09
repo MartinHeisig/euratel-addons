@@ -21,7 +21,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['delivery', 'partner_street_number', 'stock_dropshipping'],
+    'depends': ['delivery', 'partner_street_number', 'stock_dropshipping', 'purchase_transport_multi_address'],
 
     # always loaded
     'data': [
