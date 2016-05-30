@@ -152,8 +152,14 @@
                   <tr t-if="o.partner_id.phone or o.partner_id.parent_id.phone">
                     <td><b>Telefonnummer:</b></td>
                     <td>
+                      <!--t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone" t-field-options="{'phone': True, 'phone_format': 'international'}"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone" t-field-options="{'phone': True, 'phone_format': 'international'}"/></t-->
+                      <!--t-esc="format(o.partner_id.phone, phone=True, phone_format='international')"/></t>
+                      <t t-if="not o.partner_id.phone"><span t-esc="format(o.partner_id.parent_id.phone, phone=True, phone_format='international')"/></t-->
                       <!--t t-if="o.partner_id.phone"><span t-esc="'{}'.format(o.partner_id.phone, phone=True, phone_format='international')"/></t>
                       <t t-if="not o.partner_id.phone"><span t-esc="'{}'.format(o.partner_id.parent_id.phone, phone=True, phone_format='international')"/></t-->
+                      <!--t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone" t-field-options='{"widget": "phone"}'/></t>
+                      <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone" t-field-options='{"widget": "phone"}'/>/></t-->
                       <t t-if="o.partner_id.phone"><span t-field="o.partner_id.phone"/></t>
                       <t t-if="not o.partner_id.phone"><span t-field="o.partner_id.parent_id.phone"/></t>
 					</td>
@@ -351,9 +357,89 @@
               <td class="bold-35">Lieferbedingung</td>
               <td><span t-field="o.incoterm.name"/></td>
             </tr>
-            <tr t-if="o.partner_id.property_payment_term">
+            <tr t-if="o.payment_term">
               <td class="bold-35">Zahlungsbedingung</td>
-              <td><span t-field="o.partner_id.property_payment_term"/></td>
+              <td>
+                <span t-field="o.payment_term"/>
+                <!--t t-foreach="o.payment_term.line_ids" t-as="l">
+                  <br/>
+                  <t t-if="l.value in ['procent']">
+                    <span t-field="l.days"/>&amp;#x202f;Tage
+                    <span t-field="l.report_text"/>
+                    <span t-esc="str('%.2f' % ((1 - l.value_amount) * 100)).replace('.',',')"/>&amp;#x202f;% =
+                    <span t-esc="str('%.2f' % (o.amount_total * (1 - l.value_amount))).replace('.',',')"/>&amp;#x202f;€ bis
+                    <span t-esc="(datetime.datetime.strptime(o.date_order, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
+                  </t>
+                  <t t-if="l.value in ['balance']">
+                    <span t-field="l.days"/>&amp;#x202f;Tage
+                    <span t-field="l.report_text"/> bis
+                    <span t-esc="(datetime.datetime.strptime(o.date_order, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
+                  </t>
+                  <t t-if="l.value in ['fixed']">
+                  
+                  </t>
+                </t>
+                
+                <table id="positions" class="fullwidth vspace-s">
+                  <thead>
+                    <tr>
+                      <th>Art</th>
+                      <th class="right">Rabatt</th>
+                      <th class="right">Zahlungsziel</th>
+                      <th class="right">fällig am</th>
+                      <th class="right">Betrag</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr t-foreach="o.payment_term.line_ids" t-as="l">
+                      <td>
+                        <t t-if="l.report_text">
+                          <span t-field="l.report_text"/>
+                        </t>
+                      </td>
+                      <td class="right">
+                        <t t-if="l.value">
+                          <t t-if="l.value in ['procent']">
+                            <span t-esc="str('%.2f' % ((1 - l.value_amount) * 100)).replace('.',',')"/>&amp;#x202f;%
+                          </t>
+                          <t t-if="l.value in ['fixed']">
+                            <span t-esc="str('%.2f' % (l.value_amount)).replace('.',',')"/>&amp;#x202f;€
+                          </t>
+                        </t>
+                      </td>
+                      <td class="right">
+                        <t t-if="l.days">
+                          <span t-field="l.days"/>&amp;#x202f;Tag(e)
+                        </t>
+                      </td>
+                      <td class="right">
+                        <t t-if="o.date_order">
+                          <t t-if="l.days">
+                            <span t-esc="(datetime.datetime.strptime(o.date_order, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
+                          </t>
+                        </t>
+                      </td>
+                      <td class="right">
+                        <t t-if="o.amount_total">
+                          <t t-if="l.value">
+                            <t t-if="l.value in ['balance']">
+                              <span t-esc="str('%.2f' % o.amount_total).replace('.',',')"/>&amp;#x202f;€
+                            </t>
+                            <t t-if="l.value in ['procent']">
+                              <span t-esc="str('%.2f' % (o.amount_total * l.value_amount)).replace('.',',')"/>&amp;#x202f;€
+                            </t>
+                            <t t-if="l.value in ['fixed']">
+                              <span t-esc="str('%.2f' % (o.amount_total - l.value_amount)).replace('.',',')"/>&amp;#x202f;€
+                            </t>
+                          </t>
+                        </t>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table-->
+              </td>
+              <!--td><span t-field="o.payment_term"/></td-->
+              <!--td><span t-field="o.partner_id.property_payment_term"/></td-->
             </tr>
           </table>
 
