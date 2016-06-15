@@ -252,31 +252,7 @@
                   <span t-field="o.payment_term"/><br/>
                 </t>
                 <t t-foreach="o.payment_term.line_ids" t-as="l">
-                  <t t-if="l.value in ['procent']">
-                    <span t-field="l.days"/>&amp;#x202f;Tage
-                    <span t-field="l.report_text"/>
-                    <span t-esc="str('%.2f' % ((1 - l.value_amount) * 100)).replace('.',',')"/>&amp;#x202f;% =
-                    <span t-esc="str('%.2f' % (o.amount_total * (1 - l.value_amount))).replace('.',',')"/>&amp;#x202f;€ bis
-                    <t t-if="o.date_invoice">
-                      <span t-esc="(datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d') + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
-                    </t>
-                    <t t-if="not o.date_invoice">
-                      <span t-esc="(datetime.date.today() + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
-                    </t>
-                  </t>
-                  <t t-if="l.value in ['balance']">
-                    <span t-field="l.days"/>&amp;#x202f;Tage
-                    <span t-field="l.report_text"/> bis
-                    <t t-if="o.date_invoice">
-                      <span t-esc="(datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d') + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
-                    </t>
-                    <t t-if="not o.date_invoice">
-                      <span t-esc="(datetime.date.today() + datetime.timedelta(l.days)).strftime('%d.%m.%Y')"/>
-                    </t>
-                  </t>
-                  <!--t t-if="l.value in ['fixed']">
-                    Komischer Festbetrag
-                  </t-->
+                  <span t-esc="l.report_text.replace('[Tage]',str(l.days)).replace('[Prozent]',str((1 - l.value_amount) * 100).replace('.',',')).replace('[Prozentwert]',str('%.2f' % (o.amount_total * (1 - l.value_amount))).replace('.',',') + ' ' + o.currency_id.symbol).replace('[Frist]',((datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d') or datetime.date.today()) + datetime.timedelta(l.days)).strftime('%d.%m.%Y'))"/>
                   <br/>
                 </t>
               </td>
