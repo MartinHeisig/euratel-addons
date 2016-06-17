@@ -33,9 +33,9 @@
                 <t t-if="not o.delivery_address_id.is_company">
                     <t t-if="o.delivery_address_id.parent_id">
                         <div t-field="o.delivery_address_id.parent_id.name"/>
-						<div t-if="o.delivery_address_id.parent_id.first_name" t-field="o.delivery_address_id.parent_id.first_name"/>
+						<!--div t-if="o.delivery_address_id.parent_id.first_name" t-field="o.delivery_address_id.parent_id.first_name"/-->
                     </t>
-                    <div>
+                    <div t-if="not o.delivery_address_id.name.startswith('#')">
                         <span t-if="o.delivery_address_id.gender == 'm'">Herrn</span>
                         <span t-if="o.delivery_address_id.gender == 'w'">Frau</span>
                         <span t-if="o.delivery_address_id.title.shortcut" t-field="o.delivery_address_id.title.shortcut"/>
@@ -46,7 +46,7 @@
                 <!-- If partner is a company print company name first -->
                 <t t-if="o.delivery_address_id.is_company">
                     <div t-field="o.delivery_address_id.name"/>
-                    <div t-if="o.delivery_address_id.first_name" t-field="o.delivery_address_id.first_name"/>
+                    <!--div t-if="o.delivery_address_id.first_name" t-field="o.delivery_address_id.first_name"/-->
                 </t>
                 <div t-field="o.delivery_address_id.street"/>
                 <div t-if="o.delivery_address_id.street2" t-field="o.delivery_address_id.street2"/>

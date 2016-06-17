@@ -261,7 +261,7 @@
                     font-size: 8pt;
                 }
                 .x-small {
-                    font-size: 6.5pt;
+                    font-size: 6pt;
                 }
                 .tiny {
                     font-size: 0.1pt;
