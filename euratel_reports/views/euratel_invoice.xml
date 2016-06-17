@@ -24,10 +24,10 @@
             class="fullwidth"
             style="clear:both; border-top:0.2cm solid white">
             <tr>
-              <td class="top">
+              <td class="top"><br/><br/>
                 <table t-if="o.partner_id.ref or o.partner_id.phone or o.partner_id.fax or o.partner_id.email or o.name or o.partner_id.parent_id.ref or o.partner_id.parent_id.phone or o.partner_id.parent_id.fax or o.partner_id.parent_id.email"
                   class="bg-grey small left hspace-s">
-				  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
+                  <tr t-if="o.partner_id.ref or o.partner_id.parent_id.ref">
                     <td><b>Kundennummer:</b></td>
                     <td>
                       <t t-if="o.partner_id.is_company"><span t-field="o.partner_id.ref"/></t>
