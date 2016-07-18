@@ -252,7 +252,7 @@
                   <span t-field="o.payment_term"/><br/>
                 </t>
                 <t t-foreach="o.payment_term.line_ids" t-as="l">
-                  <span t-esc="l.report_text.replace('[Tage]',str(l.days)).replace('[Prozent]',str((1 - l.value_amount) * 100).replace('.',',')).replace('[Prozentwert]',str('%.2f' % (o.amount_total * (1 - l.value_amount))).replace('.',',') + ' ' + o.currency_id.symbol).replace('[Frist]',(((o.date_invoice and datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d')) or datetime.date.today()) + datetime.timedelta(l.days)).strftime('%d.%m.%Y'))"/>
+                  <span t-esc="l.report_text.replace('[Tage]',str(l.days)).replace('[Prozent]',str((1 - l.value_amount) * 100).replace('.',',')).replace('[Prozentwert]',str('%.2f' % (o.amount_total * (1 - l.value_amount))).replace('.',',') + ' ' + o.currency_id.symbol).replace('[Frist]',(((o.date_invoice and datetime.datetime.strptime(o.date_invoice, '%Y-%m-%d')) or datetime.date.today()) + datetime.timedelta(l.days)).strftime('%d.%m.%Y')).replace('[Mandatsreferenz]',(o.partner_id.is_company and o.partner_id.debit_ref) or (o.partner_id.parent_id and o.partner_id.parent_id.debit_ref) or '....................').replace('[IBAN]',(o.partner_id.is_company and o.partner_id.bank_ids and o.partner_id.bank_ids[0] and o.partner_id.bank_ids[0].acc_number) or (o.partner_id.parent_id and o.partner_id.parent_id.bank_ids and o.partner_id.parent_id.bank_ids[0] and o.partner_id.parent_id.bank_ids[0].acc_number) or '....................')"/>
                   <br/>
                 </t>
               </td>
