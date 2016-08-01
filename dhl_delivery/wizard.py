@@ -273,6 +273,7 @@ class DHLStockTransferDetails(models.TransientModel):
                 try:
                     attach_id = self.env['ir.attachment'].create({
                         'name':filename,
+                        'datas_fname':filename,
                         'res_name': filename,
                         'type': 'binary',
                         'res_model': 'stock.picking',
