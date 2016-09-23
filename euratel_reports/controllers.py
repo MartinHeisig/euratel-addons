@@ -65,7 +65,7 @@ class Extension(main.ReportController):
                     cr, uid, context = request.cr, request.uid, request.context
                     report = report_obj._get_report_from_name(cr, uid, reportname)
                     obj = report_obj.pool[report.model].browse(cr, uid, docids[0])
-                    if obj.name:
+                    if hasattr(obj, 'name') and obj.name:
                         reportname = obj.name
                     ##### FIX END
                 else:
